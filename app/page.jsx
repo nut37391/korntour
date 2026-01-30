@@ -1,16 +1,22 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 import React from "react";
-import Head from "next/head";
 import Image from "next/image";
 import { Anuphan } from "next/font/google";
-import "@fortawesome/fontawesome-free/css/all.min.css";
 import "../app/globals.css";
 import { YouTubeEmbed, Button } from "./component";
+import {
+  ArrowRightIcon,
+  CertificateIcon,
+  HeartIcon,
+  StarIcon,
+  MapMarkerIcon,
+  CompassIcon,
+  EnvelopeIcon,
+  UsersIcon,
+} from "./component/Icons";
 import { useRouter } from "next/navigation";
 // Import images
-import testicon from "@/public/images/image.png";
-import aboutIcon from "@/public/images/imageAbout.png";
 import ElephatGrand from "@/public/images/ElephantGrandCanyon/ElephantGrandCanyon11.jpg";
 import InthanonPhaDok from "@/public/images/InthanonPhaDok/InthanonPhaDok7.jpg";
 import AFunDay25 from "@/public/images/A-Fun-Day/AFunDay25.jpg";
@@ -44,27 +50,17 @@ export default function Home() {
 
   return (
     <div className={anuphan.className}>
-      <Head>
-        <title>Chiang Mai Friendly Tour</title>
-        <meta
-          name="description"
-          content="Discover a variety of tours and activities in Chiang Mai, including temple visits, elephant care, and national park trekking. Book your adventure today with Mr.Korn Tour & Travel!"
-        />
-        <meta
-          name="keywords"
-          content="Chiang Mai tours, Chiang Mai travel, Chiang Mai attractions, Chiang Mai tourism, Chiang Mai adventure tours, Chiang Mai trekking, Chiang Mai elephant care, Chiang Mai temple tours, Chiang Mai cultural tours, Chiang Mai national park tours, Chiang Mai hiking, Chiang Mai cycling tours, Chiang Mai food tours, Chiang Mai night tours, Chiang Mai private tours, Chiang Mai day trips, Chiang Mai guided tours, Chiang Mai sightseeing, Chiang Mai eco tours, Best tours in Chiang Mai"
-        />
-        <meta name="robots" content="index, follow" />
-        <link rel="canonical" href="https://mrkorntourcnx.com" />
-      </Head>
       <div className="flex flex-col min-h-screen max-w-[1440px] mx-auto w-full">
         {/* Hero Section */}
         <section className="relative w-full h-[500px] lg:h-[600px] overflow-hidden">
           <Image
             src={ElephantSan}
-            alt="Elephant Sanctuary"
+            alt="Chiang Mai Friendly Tour - Elephant Care and Temple Tours in Chiang Mai Thailand"
             fill
             priority
+            quality={75}
+            sizes="100vw"
+            placeholder="blur"
             className="object-cover"
           />
           {/* Gradient Overlay */}
@@ -80,7 +76,7 @@ export default function Home() {
               </h1>
               <p className="text-lg text-white/90 mb-8 max-w-lg">
                 Experience authentic elephant encounters, breathtaking nature trails,
-                and the rich culture of Northern Thailand.
+                and the culture of Northern Thailand.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Button
@@ -127,7 +123,7 @@ export default function Home() {
                 onClick={() => router.push("/services")}
               >
                 View All Tours
-                <i className="fas fa-arrow-right" />
+                <ArrowRightIcon className="w-4 h-4" />
               </button>
             </div>
 
@@ -144,6 +140,9 @@ export default function Home() {
                       src={tour.image}
                       alt={tour.text}
                       fill
+                      quality={75}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      placeholder="blur"
                       className="object-cover group-hover:scale-110 transition-transform duration-700"
                     />
                     {/* Tag */}
@@ -176,17 +175,17 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[
                 {
-                  icon: "fa-certificate",
+                  icon: <CertificateIcon className="w-8 h-8 text-royal-blue" />,
                   title: "Licensed Tour Operator",
                   desc: "TAT License No. 23/03998 - Fully licensed and insured",
                 },
                 {
-                  icon: "fa-heart",
+                  icon: <HeartIcon className="w-8 h-8 text-royal-blue" />,
                   title: "Ethical Tourism",
                   desc: "We support elephant welfare and sustainable practices",
                 },
                 {
-                  icon: "fa-star",
+                  icon: <StarIcon className="w-8 h-8 text-royal-blue" />,
                   title: "5-Star Reviews",
                   desc: "Highly rated by travelers from around the world",
                 },
@@ -196,7 +195,7 @@ export default function Home() {
                   className="flex flex-col items-center text-center p-8 bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300"
                 >
                   <div className="w-16 h-16 bg-sky-blue/10 rounded-full flex items-center justify-center mb-4">
-                    <i className={`fas ${feature.icon} text-2xl text-royal-blue`} />
+                    {feature.icon}
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 mb-2">{feature.title}</h3>
                   <p className="text-gray-stack">{feature.desc}</p>
@@ -322,6 +321,9 @@ export default function Home() {
               src={InthanonPhaDok}
               alt="Adventure Background"
               fill
+              quality={60}
+              sizes="100vw"
+              placeholder="blur"
               className="object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-navy-blue/95 via-royal-blue/85 to-ocean-blue/90" />
@@ -332,7 +334,7 @@ export default function Home() {
           {/* Content */}
           <div className="relative max-w-4xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 bg-white/20 backdrop-blur-sm rounded-full">
-              <i className="fas fa-map-marker-alt text-light-gold" />
+              <MapMarkerIcon className="w-4 h-4 text-light-gold" />
               <span className="text-white text-sm font-medium">Chiang Mai, Thailand</span>
             </div>
             <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
@@ -348,30 +350,30 @@ export default function Home() {
                 className="group h-14 px-8 bg-gold text-white font-semibold rounded-xl hover:bg-golden hover:scale-105 transition-all duration-300 flex items-center gap-3 shadow-lg shadow-black/20"
                 onClick={() => router.push("/services")}
               >
-                <i className="fas fa-compass text-lg" />
+                <CompassIcon className="w-5 h-5" />
                 Browse Tours
-                <i className="fas fa-arrow-right group-hover:translate-x-1 transition-transform" />
+                <ArrowRightIcon className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
               <button
                 className="group h-14 px-8 bg-white/10 backdrop-blur-sm border-2 border-white/50 text-white font-semibold rounded-xl hover:bg-white hover:text-royal-blue hover:scale-105 transition-all duration-300 flex items-center gap-3"
                 onClick={() => router.push("/contact-us")}
               >
-                <i className="fas fa-envelope text-lg" />
+                <EnvelopeIcon className="w-5 h-5" />
                 Get in Touch
               </button>
             </div>
             {/* Trust Badges */}
             <div className="mt-12 flex flex-wrap justify-center items-center gap-8 text-white/70">
               <div className="flex items-center gap-2">
-                <i className="fas fa-star text-gold" />
+                <StarIcon className="w-4 h-4 text-gold" />
                 <span className="text-sm">5-Star Rated</span>
               </div>
               <div className="flex items-center gap-2">
-                <i className="fas fa-users" />
+                <UsersIcon className="w-4 h-4" />
                 <span className="text-sm">1000+ Happy Travelers</span>
               </div>
               <div className="flex items-center gap-2">
-                <i className="fas fa-certificate text-light-gold" />
+                <CertificateIcon className="w-4 h-4 text-light-gold" />
                 <span className="text-sm">License No. 23/03998</span>
               </div>
             </div>

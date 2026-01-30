@@ -424,8 +424,8 @@ const Booking = ({ tour, price }) => {
 
             {/* Info Sidebar */}
             <div className="bg-gradient-to-br from-green-cyan to-pine-green p-6 md:p-10 md:w-80 text-white">
-              <h3 className="text-xl font-bold mb-6">What&apos;s Included</h3>
-              <ul className="space-y-4">
+              {/* <h3 className="text-xl font-bold mb-6">What&apos;s Included</h3> */}
+              {/* <ul className="space-y-4">
                 <li className="flex items-start gap-3">
                   <svg className="w-5 h-5 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
@@ -456,9 +456,9 @@ const Booking = ({ tour, price }) => {
                   </svg>
                   <span>Travel insurance</span>
                 </li>
-              </ul>
+              </ul> */}
 
-              <div className="mt-8 pt-6 border-t border-white/20">
+              <div className="mt-8 pt-6 ">
                 <h4 className="font-semibold mb-3">Need Help?</h4>
                 <p className="text-sm text-white/80 mb-4">
                   Contact us for any questions about this tour

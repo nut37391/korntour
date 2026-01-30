@@ -8,7 +8,7 @@ export default function Privacy() {
         <strong>1. Introduction</strong>
       </p>
       <p className="pb-6">
-        Welcome to mrkorntourcnx! We are committed to protecting your personal
+        Welcome to chiangmaifriendlytour! We are committed to protecting your personal
         information and your right to privacy. This Privacy Policy explains how
         we collect, use, disclose, and safeguard your information when you visit
         our website

@@ -1,6 +1,5 @@
 import React from "react";
 import BannerService from "@/app/component/bannerService";
-import Head from "next/head";
 import {
   Booking,
   ImageGalleryService,
@@ -282,7 +281,7 @@ const AFunDayGallery = [
 ];
 
 // Reusable content component for tour itinerary
-const TourItinerary = ({ schedule, highlights, included }) => (
+const TourItinerary = ({ schedule, highlights, included, whatToBring }) => (
   <div className="py-12 md:py-16 px-4">
     <div className="max-w-4xl mx-auto">
       {/* Schedule Section */}
@@ -369,6 +368,31 @@ const TourItinerary = ({ schedule, highlights, included }) => (
           ))}
         </div>
       </div>
+
+      {/* What to Bring Section */}
+      {whatToBring && whatToBring.length > 0 && (
+        <div className="bg-gradient-to-br from-amber-50 to-white rounded-2xl border border-amber-100 p-6 mt-8">
+          <h3 className="text-gray-800 text-lg font-semibold mb-4 flex items-center gap-2">
+            <svg className="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+            </svg>
+            What to Bring
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {whatToBring.map((item, index) => (
+              <div
+                key={index}
+                className="flex items-center gap-2 text-gray-700"
+              >
+                <svg className="w-4 h-4 text-amber-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                </svg>
+                {item}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   </div>
 );
@@ -550,24 +574,75 @@ const detailId = [
   {
     id: 9,
     slug: "a-fun-day-with-cooking-class-and-elephants",
-    detail: "a fun day with cooking class and elephants",
+    detail: "A Fun Day with Cooking Class and Elephants",
     src: AFunDay25,
     imageGallery: AFunDayGallery,
     price: 2800,
     person: 'Ages 1-3 years are free.',
     content: (
-      <TourItinerary
-        schedule={{ pickup: "7:00 - 7:30 AM", return: "5:30 PM" }}
-        highlights={[
-          "Visit the highest point in Thailand",
-          "See the King's and Queen's Pagodas",
-          "Shop at Hmong Market for local goods",
-          "Trek to Pha Dok Seaw Waterfall (2 hours)",
-          "Visit Karen Village at Baan Mae Klang Luang",
-          "Marvel at Wachirathan Waterfall"
-        ]}
-        included={["Round-trip transportation to the cooking class and elephant experience, from a hotel or residence within a reasonable distance.", "Cooking Class’ ingredients and utensils.", "PDF recipe book created for our cooking class", "Elephants’ food", "Insurance for Elephants’ experience", "Drinking Water"]}
-      />
+      <>
+        {/* About Us Section */}
+        <div className="py-12 md:py-16 px-4 bg-gradient-to-b from-white to-gray-50">
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+              <div className="bg-gradient-to-r from-green-cyan to-pine-green px-6 py-4">
+                <h3 className="text-white text-lg font-semibold flex items-center gap-2">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  About Us
+                </h3>
+              </div>
+              <div className="p-6 space-y-4">
+                <p className="text-gray-700 leading-relaxed">
+                  <strong className="text-pine-green">A Fun Day Cooking Class and Elephants</strong> is designed to offer quality cooking courses and elephant activities for English and Mandarin Chinese speaking visitors and residents in Chiang Mai. We currently have 3 kitchens with a capacity of 34 customers at one time. Our location is in a beautiful setting surrounded by trees.
+                </p>
+                <p className="text-gray-700 leading-relaxed">
+                  This product is focusing on being a part of our culture like Thai Cooking Class, starting with the Market Tours and cooking Thai Food with locals who speak English and Mandarin Chinese well.
+                </p>
+                <div className="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg">
+                  <div className="flex items-start gap-3">
+                    <svg className="w-6 h-6 text-amber-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <div>
+                      <h4 className="font-semibold text-amber-800 mb-1">Ethical Elephant Care</h4>
+                      <p className="text-gray-700 leading-relaxed">
+                        Thai Elephant Observation: we are going to take the customers to learn how Thai Elephants&apos; life, walk, feed and make vitamins if they have any health concerns. <strong className="text-red-600">NO ELEPHANTS RIDING OR HUMAN-LIKE BEHAVIOR</strong> allowed.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <TourItinerary
+          schedule={{ pickup: "8:30 - 9:00 AM", return: "5:00 PM" }}
+          highlights={[
+            "Cooking Class pickup (8:30 - 9:00 AM)",
+            "Market Tour - explore local Thai market (9:15 - 10:00 AM)",
+            "Thai Cooking Class - learn authentic recipes (10:00 AM - 1:45 PM)",
+            "Elephants pickup (2:00 PM)",
+            "Learn the life of Thai Elephants",
+            "Make vitamin balls for elephants",
+            "Feed the elephants",
+            "Walk with the elephants (2:00 - 5:00 PM)"
+          ]}
+          included={["Round-trip transportation", "Cooking Class ingredients and utensils", "PDF recipe book", "Elephant food", "Insurance", "Drinking Water"]}
+          whatToBring={[
+            "Extra clothes",
+            "Sunscreen lotion",
+            "Swimming suit",
+            "Insect spray",
+            "Sandals and towel",
+            "Your own allergy medication",
+            "Rain coats (rainy season)",
+            "Winter coats (cool season)"
+          ]}
+        />
+      </>
     ),
   },
 ];
@@ -578,14 +653,31 @@ export async function generateMetadata({ params }) {
 
   if (!detail) {
     return {
-      title: "Service Not Found | Mr.Korn Tour & Travel Chiang Mai",
-      description: "The requested service could not be found.",
+      title: "Tour Not Found",
+      description: "The requested tour could not be found.",
     };
   }
 
+  const tourUrl = `https://chiangmaifriendlytour.com/services/detail/${slug}`;
+
   return {
-    title: `${detail.detail} | Mr.Korn Tour & Travel Chiang Mai`,
-    description: `Join us on our ${detail.detail} tour and experience the beauty and culture of Chiang Mai. This tour includes transportation, guide, lunch, and more.`,
+    title: detail.detail,
+    description: `Book ${detail.detail} tour in Chiang Mai. Experience authentic Thai culture with local guides. Includes transportation, guide, and lunch. Starting from ${detail.price} THB. Book now!`,
+    keywords: [
+      detail.detail,
+      "Chiang Mai tour",
+      "Thailand tour",
+      slug.split("-").join(" "),
+    ],
+    alternates: {
+      canonical: tourUrl,
+    },
+    openGraph: {
+      title: `${detail.detail} | Chiang Mai Friendly Tour`,
+      description: `Book ${detail.detail} tour. Includes transportation, guide, and lunch. Starting from ${detail.price} THB.`,
+      url: tourUrl,
+      type: "website",
+    },
   };
 }
 
@@ -605,25 +697,7 @@ export default function Details({ params: { slug } }) {
   }
 
   return (
-    <>
-      <Head>
-        <title>{detail.detail} | Mr.Korn Tour & Travel Chiang Mai</title>
-        <meta
-          name="description"
-          content={`Join us on our ${detail.detail} tour and experience the beauty and culture of Chiang Mai. This tour includes transportation, guide, lunch, and more.`}
-        />
-        <meta
-          name="keywords"
-          content={`Chiang Mai tours, ${detail.detail.toLowerCase()}, temple tours, elephant care, national park trekking, adventure tours`}
-        />
-
-        <meta name="robots" content="index, follow" />
-        <link
-          rel="canonical"
-          href={`https://mrkorntourcnx.com/services/detail/${detail.slug}`}
-        />
-      </Head>
-      <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col">
         {/* Hero Banner */}
         <BannerService scrImage={detail.src} title={detail.detail} />
 
@@ -649,6 +723,5 @@ export default function Details({ params: { slug } }) {
           <Booking tour={detail.detail} price={detail.price} />
         </div>
       </div>
-    </>
   );
 }

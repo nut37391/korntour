@@ -20,6 +20,7 @@ const BookingDetail = (props) => {
       }
     }
     fetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refId]);
 
   const fetchData = async () => {

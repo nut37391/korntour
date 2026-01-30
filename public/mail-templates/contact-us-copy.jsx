@@ -362,9 +362,9 @@ ul.social li{
                       <td style="text-align: left; padding-left: 10px;">
                       	<h3 class="heading">Useful Links</h3>
                       	<ul>
-					                <li><a href="https://mrkorntourcnx.com/">Home</a></li>
-					                <li><a href="https://mrkorntourcnx.com/contact-us">Contact Us</a></li>
-					                <li><a href="https://mrkorntourcnx.com/services">Services</a></li>
+					                <li><a href="https://chiangmaifriendlytour.com/">Home</a></li>
+					                <li><a href="https://chiangmaifriendlytour.com/contact-us">Contact Us</a></li>
+					                <li><a href="https://chiangmaifriendlytour.com/services">Services</a></li>
 					              </ul>
                       </td>
                     </tr>

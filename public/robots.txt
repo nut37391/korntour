@@ -1,4 +1,5 @@
 User-agent: *
-Disallow: 
+Disallow: /payment-success/
+Disallow: /thank-you/
 Crawl-delay: 5
-Sitemap: https://mrkorntourcnx.com/sitemap.xml
+Sitemap: https://chiangmaifriendlytour.com/sitemap.xml
