@@ -9,21 +9,22 @@ const Navbar = () => {
   };
   return (
     <>
-      <nav className=" bg-navy-blue p-5">
-        <div className="max-w-[1280px] mx-auto  ">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center">
+      <nav className="bg-navy-blue py-3 px-5">
+        <div className="max-w-[1280px] mx-auto">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
               <div className="flex-shrink-0">
                 <a href="/" className="text-white">
                   <Image
-                    src="/images/icon12.png"
+                    src="/images/favicon.png"
                     alt="logo"
-                    width={100}
-                    height={100}
+                    width={56}
+                    height={56}
+                    className="rounded-full"
                   />
                 </a>
               </div>
-              <h3 className=" text-white">Chiang Mai Friendly Tour</h3>
+              <h3 className="text-white font-medium text-lg hidden sm:block">Chiang Mai Friendly Tour</h3>
             </div>
 
             <div className="hidden md:block">

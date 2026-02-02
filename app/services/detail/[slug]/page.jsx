@@ -49,6 +49,17 @@ import ElephantGrandCanyon13 from "@/public/images/ElephantGrandCanyon/ElephantG
 import ElephantGrandCanyon14 from "@/public/images/ElephantGrandCanyon/ElephantGrandCanyon14.jpg";
 import ElephantGrandCanyon15 from "@/public/images/ElephantGrandCanyon/ElephantGrandCanyon15.jpg";
 import ElephantGrandCanyon16 from "@/public/images/ElephantGrandCanyon/ElephantGrandCanyon16.jpg";
+import ElephantGrandCanyon17 from "@/public/images/ElephantGrandCanyon/ElephantGrandCanyon17.jpg";
+import ElephantGrandCanyon18 from "@/public/images/ElephantGrandCanyon/ElephantGrandCanyon18.jpg";
+import ElephantGrandCanyon19 from "@/public/images/ElephantGrandCanyon/ElephantGrandCanyon19.jpg";
+import ElephantGrandCanyon20 from "@/public/images/ElephantGrandCanyon/ElephantGrandCanyon20.jpg";
+import ElephantGrandCanyon21 from "@/public/images/ElephantGrandCanyon/ElephantGrandCanyon21.jpg";
+import ElephantGrandCanyon22 from "@/public/images/ElephantGrandCanyon/ElephantGrandCanyon22.jpg";
+import ElephantGrandCanyon23 from "@/public/images/ElephantGrandCanyon/ElephantGrandCanyon23.jpg";
+import ElephantGrandCanyon24 from "@/public/images/ElephantGrandCanyon/ElephantGrandCanyon24.jpg";
+import ElephantGrandCanyon25 from "@/public/images/ElephantGrandCanyon/ElephantGrandCanyon25.jpg";
+
+
 
 //ElephantStickyGallery
 import ElephantSticky1 from "@/public/images/ElephantSticky/ElephantSticky1.jpg";
@@ -182,6 +193,15 @@ const EleGrandCanyonGallery = [
   { src: ElephantGrandCanyon14 },
   { src: ElephantGrandCanyon15 },
   { src: ElephantGrandCanyon16 },
+  { src: ElephantGrandCanyon17 },
+  { src: ElephantGrandCanyon18 },
+  { src: ElephantGrandCanyon19 },
+  { src: ElephantGrandCanyon20 },
+  { src: ElephantGrandCanyon21 },
+  { src: ElephantGrandCanyon22 },
+  { src: ElephantGrandCanyon23 },
+  { src: ElephantGrandCanyon24 },
+  { src: ElephantGrandCanyon25 },
 ];
 
 const ElephantStickyGallery = [

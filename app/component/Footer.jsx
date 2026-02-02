@@ -5,7 +5,7 @@ import Link from "next/link";
 // import { ScrollLink } from "react-scroll";
 
 /// import image
-import icon11 from "../../public/images/icon11.png";
+import icon11 from "../../public/images/favicon.png";
 import igIcon from "../../public/images/icon/ig.png";
 import fbIcon from "../../public/images/icon/facebook.png";
 import youtubeIcon from "../../public/images/icon/youtube.png";
