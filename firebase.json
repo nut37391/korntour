@@ -8,6 +8,23 @@
         "destination": "/index.html"
       }
     ],
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "**/README.txt"
+    ],
+    "redirects": [
+      {
+        "source": "/services",
+        "destination": "/programs",
+        "type": 301
+      },
+      {
+        "source": "/services/**",
+        "destination": "/programs",
+        "type": 301
+      }
+    ]
   }
 }

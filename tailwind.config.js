@@ -24,9 +24,37 @@ module.exports = {
       "2xl": ["32px", "40px"],
       "3xl": ["40px", "48px"],
       "4xl": ["48px", "56px"],
+      "5xl": ["56px", "1"],
+      "6xl": ["64px", "1"],
+      "7xl": ["80px", "1"],
+      "8xl": ["104px", "1"],
     },
     extend: {
+      fontFamily: {
+        display: ["var(--font-display)", "var(--font-body)", "sans-serif"],
+        body: ["var(--font-body)", "sans-serif"],
+      },
       colors: {
+        // Samoeng Jungle Tubing theme: deep jungle green + ember orange
+        jungle: {
+          50: "#eef5f0",
+          100: "#d3e6da",
+          300: "#7fb394",
+          500: "#2f7a52",
+          600: "#23603f",
+          700: "#1b4a33",
+          800: "#143826",
+          900: "#0f2a1d",
+          950: "#0a1d14",
+        },
+        ember: {
+          300: "#ffb27a",
+          400: "#ff8a3d",
+          500: "#ff6a13",
+          600: "#e5550a",
+          700: "#bf4306",
+        },
+        sand: "#f6f2ea",
         // Legacy green colors (keep for backwards compatibility)
         "forest-green": "#454F45",
         "pixie-green": "#bcd5b0",
@@ -56,7 +84,7 @@ module.exports = {
       themes: {
         light: {
           colors: {
-            primary: "#1e40af",
+            primary: "#ff6a13",
           },
         },
       },

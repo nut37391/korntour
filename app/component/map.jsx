@@ -1,45 +1,31 @@
-"use client";
+import { site } from "../data/site";
 
-//Map component Component from library
-import { GoogleMap, MarkerF } from "@react-google-maps/api";
+// Office location. Uses Google's keyless embed, so no API key or billing is needed.
+const OFFICE = { lat: 18.7795919, lng: 98.9993213 };
+const EMBED_URL = `https://maps.google.com/maps?q=${OFFICE.lat},${OFFICE.lng}&z=16&output=embed`;
+const DIRECTIONS_URL = `https://www.google.com/maps/dir/?api=1&destination=${OFFICE.lat},${OFFICE.lng}`;
 
-//Map's styling
-const defaultMapContainerStyle = {
-  width: "100%",
-  height: "300px",
-  borderRadius: "8px 8px 8px 8px",
-};
-
-//K2's coordinates
-const defaultMapCenter = {
-  lat: 18.7795919,
-  lng: 98.9993213,
-};
-
-//Default zoom level, can be adjusted
-const defaultMapZoom = 16;
-
-//Map options
-const defaultMapOptions = {
-  zoomControl: true,
-  tilt: 0,
-  gestureHandling: "auto",
-  mapTypeId: "roadmap",
-};
-
-const MapComponent = () => {
-  return (
-    <div className="w-full">
-      <GoogleMap
-        mapContainerStyle={defaultMapContainerStyle}
-        center={defaultMapCenter}
-        zoom={defaultMapZoom}
-        options={defaultMapOptions}
-      >
-        <MarkerF position={defaultMapCenter} />
-      </GoogleMap>
-    </div>
-  );
-};
+// `dark` recolors the embed with a CSS filter (the keyless embed has no style options).
+const MapComponent = ({ dark = false }) => (
+  <div className="relative h-full min-h-[400px] w-full">
+    <iframe
+      src={EMBED_URL}
+      title={`${site.company} office on Google Maps`}
+      className="absolute inset-0 h-full w-full border-0"
+      style={dark ? { filter: "invert(92%) hue-rotate(180deg) saturate(0.6) brightness(0.9)" } : undefined}
+      loading="lazy"
+      referrerPolicy="no-referrer-when-downgrade"
+      allowFullScreen
+    />
+    <a
+      href={DIRECTIONS_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="absolute bottom-4 left-4 rounded-full bg-ember-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-ember-600"
+    >
+      Get directions
+    </a>
+  </div>
+);
 
 export { MapComponent };

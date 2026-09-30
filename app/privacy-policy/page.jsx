@@ -66,7 +66,7 @@ export default function Privacy() {
       <ul className="pb-6">
         <li className="pt-1">
           <strong>Delete Your Information</strong>: Contact us at
-          ChiangmaiFriendlyTour.cnx@gmail.com to request the deletion of your personal
+          Samoengjungletubing@gmail.com to request the deletion of your personal
           information.
         </li>
       </ul>
@@ -110,7 +110,7 @@ export default function Privacy() {
         <strong>Address</strong>: 6/1 Kamphaeng Din Road 2, Chang Moi
         Subdistrict, Mueang Chiang Mai District, Chiang Mai, 51000
       </p>
-      <strong>Email</strong>: ChiangmaiFriendlyTour.cnx@gmail.com
+      <strong>Email</strong>: Samoengjungletubing@gmail.com
       <p></p>
     </div>
   );

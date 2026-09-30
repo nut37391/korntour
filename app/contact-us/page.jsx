@@ -1,9 +1,11 @@
 import ContactClient from "./ContactClient";
+import { getHeroImage, getQrImage, listImages } from "../lib/images";
+import { programs } from "../data/programs";
 
 export const metadata = {
-  title: "Contact Us - Chiang Mai Friendly Tour",
+  title: "Contact Us",
   description:
-    "Contact Chiang Mai Friendly Tour for tour bookings and inquiries. Phone: +66 62-283-0334, Email: ChiangmaiFriendlyTour.cnx@gmail.com. Located in Chang Khlan, Chiang Mai. Available 24/7.",
+    "Contact Samoeng Jungle Tubing for bookings and inquiries. Phone: +66 62-283-0334, Email: Samoengjungletubing@gmail.com. Located in Chang Khlan, Chiang Mai. Available 24/7.",
   keywords: [
     "contact Chiang Mai tour",
     "book Chiang Mai tour",
@@ -15,7 +17,7 @@ export const metadata = {
     canonical: "https://chiangmaifriendlytour.com/contact-us",
   },
   openGraph: {
-    title: "Contact Us - Chiang Mai Friendly Tour",
+    title: "Contact Us - Samoeng Jungle Tubing",
     description:
       "Get in touch with us for tour bookings and inquiries. We're available 24/7!",
     url: "https://chiangmaifriendlytour.com/contact-us",
@@ -24,5 +26,7 @@ export const metadata = {
 };
 
 export default function Contact() {
-  return <ContactClient />;
+  // Banner photo: public/programs/contact/ if provided, otherwise the home page hero photo.
+  const banner = listImages("programs/contact")[0] ?? getHeroImage(programs);
+  return <ContactClient qr={getQrImage()} banner={banner} />;
 }

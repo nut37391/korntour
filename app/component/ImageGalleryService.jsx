@@ -1,158 +1,231 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
-import React, { useState } from "react";
-import Image from "next/image";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Modal from "react-modal";
 
+const AUTOPLAY_MS = 5000;
+const SWIPE_PX = 40;
+
+const Arrow = ({ dir, onClick, className = "" }) => (
+  <button
+    onClick={onClick}
+    aria-label={dir === "left" ? "Previous image" : "Next image"}
+    className={`flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white backdrop-blur-md transition-all duration-300 hover:scale-110 hover:border-ember-500 hover:bg-ember-500 ${className}`}
+  >
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d={dir === "left" ? "M15 19l-7-7 7-7" : "M9 5l7 7-7 7"} />
+    </svg>
+  </button>
+);
+
+// Coverflow-style carousel with autoplay, thumbnails, swipe, keyboard and a fullscreen lightbox.
 const ImageGalleryService = ({ imageGallery }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [currentImage, setCurrentImage] = useState(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const images = imageGallery.map((img) => img.src);
+  const count = images.length;
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [lightbox, setLightbox] = useState(false);
+  const pointerX = useRef(null);
+  const swiped = useRef(false);
+  const thumbsRef = useRef(null);
 
-  const openModal = (image, index) => {
-    setCurrentImage(image);
-    setCurrentIndex(index);
-    setIsOpen(true);
+  const go = useCallback((i) => setActive(((i % count) + count) % count), [count]);
+  const next = useCallback(() => go(active + 1), [go, active]);
+  const prev = useCallback(() => go(active - 1), [go, active]);
+
+  // Autoplay (restarts whenever the slide changes)
+  useEffect(() => {
+    if (paused || lightbox || count < 2) return;
+    const t = setTimeout(next, AUTOPLAY_MS);
+    return () => clearTimeout(t);
+  }, [active, paused, lightbox, next, count]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "ArrowRight") next();
+      if (e.key === "ArrowLeft") prev();
+      if (e.key === "Escape") setLightbox(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [next, prev]);
+
+  // Keep the active thumbnail in view without scrolling the page
+  useEffect(() => {
+    const strip = thumbsRef.current;
+    const thumb = strip?.children[active];
+    if (!strip || !thumb) return;
+    strip.scrollTo({ left: thumb.offsetLeft - strip.clientWidth / 2 + thumb.clientWidth / 2, behavior: "smooth" });
+  }, [active]);
+
+  if (!count) return null;
+
+  // Shortest circular distance from the active slide, e.g. -2..2
+  const offsetOf = (i) => {
+    let d = i - active;
+    if (d > count / 2) d -= count;
+    if (d < -count / 2) d += count;
+    return d;
   };
 
-  const closeModal = () => {
-    setIsOpen(false);
-    setCurrentImage(null);
+  const onPointerDown = (e) => (pointerX.current = e.clientX);
+  const onPointerUp = (e) => {
+    if (pointerX.current === null) return;
+    const dx = e.clientX - pointerX.current;
+    pointerX.current = null;
+    swiped.current = Math.abs(dx) > SWIPE_PX;
+    if (dx > SWIPE_PX) prev();
+    else if (dx < -SWIPE_PX) next();
   };
 
-  const goToPrevious = () => {
-    const newIndex = currentIndex === 0 ? imageGallery.length - 1 : currentIndex - 1;
-    setCurrentIndex(newIndex);
-    setCurrentImage(imageGallery[newIndex]);
-  };
-
-  const goToNext = () => {
-    const newIndex = currentIndex === imageGallery.length - 1 ? 0 : currentIndex + 1;
-    setCurrentIndex(newIndex);
-    setCurrentImage(imageGallery[newIndex]);
-  };
+  const pad = (n) => String(n).padStart(2, "0");
 
   return (
-    <div className="bg-gradient-to-b from-gray-900 to-black py-16 md:py-20">
-      <div className="max-w-7xl mx-auto px-4">
-        {/* Section Header */}
-        <div className="text-center mb-12">
-          <p className="text-green-cyan text-sm uppercase tracking-widest mb-2">
-            Explore Our Tour
-          </p>
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Image Gallery
-          </h2>
-          <div className="flex items-center justify-center gap-2">
-            <div className="h-[2px] w-8 bg-green-cyan/50"></div>
-            <div className="h-[2px] w-16 bg-green-cyan"></div>
-            <div className="h-[2px] w-8 bg-green-cyan/50"></div>
+    <section className="relative overflow-hidden bg-jungle-950 py-20 md:py-24">
+      {/* Blurred backdrop of the current photo */}
+      {images.map((src, i) => (
+        <img
+          key={src}
+          src={src}
+          alt=""
+          aria-hidden="true"
+          className={`absolute inset-0 h-full w-full scale-110 object-cover blur-3xl transition-opacity duration-1000 ${
+            i === active ? "opacity-40" : "opacity-0"
+          }`}
+        />
+      ))}
+      <div className="absolute inset-0 bg-gradient-to-b from-jungle-950 via-jungle-950/60 to-jungle-950" />
+
+      <div className="relative max-w-[1280px] mx-auto px-5 lg:px-10">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+          <div>
+            <p className="text-ember-400 text-sm font-semibold uppercase tracking-widest">Explore The Trip</p>
+            <h2 className="mt-2 font-display uppercase text-5xl md:text-6xl text-white">Gallery</h2>
+          </div>
+          <div className="flex items-center gap-5">
+            <p className="font-display text-white">
+              <span className="text-4xl text-ember-500">{pad(active + 1)}</span>
+              <span className="text-lg text-white/40"> / {pad(count)}</span>
+            </p>
+            <div className="hidden md:flex gap-3">
+              <Arrow dir="left" onClick={prev} />
+              <Arrow dir="right" onClick={next} />
+            </div>
           </div>
         </div>
 
-        {/* Gallery Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-          {imageGallery.map((image, index) => (
-            <div
-              className="group relative aspect-square overflow-hidden rounded-xl cursor-pointer"
-              key={index}
-              onClick={() => openModal(image, index)}
+        {/* Coverflow stage */}
+        <div
+          className="relative mt-12 h-[260px] sm:h-[380px] lg:h-[520px] select-none touch-pan-y"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+          onPointerDown={onPointerDown}
+          onPointerUp={onPointerUp}
+          style={{ perspective: "1600px" }}
+        >
+          {images.map((src, i) => {
+            const d = offsetOf(i);
+            const abs = Math.abs(d);
+            const hidden = abs > 2;
+            return (
+              <button
+                key={src}
+                onClick={() => {
+                  if (swiped.current) return (swiped.current = false);
+                  d === 0 ? setLightbox(true) : go(i);
+                }}
+                aria-label={d === 0 ? "Open fullscreen" : `Show image ${i + 1}`}
+                className="absolute left-1/2 top-0 h-full w-[78%] sm:w-[62%] lg:w-[58%] overflow-hidden rounded-3xl shadow-2xl shadow-black/50 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                style={{
+                  transform: `translateX(calc(-50% + ${d * 58}%)) scale(${1 - abs * 0.16}) rotateY(${d * -8}deg)`,
+                  zIndex: 10 - abs,
+                  opacity: hidden ? 0 : 1 - abs * 0.25,
+                  pointerEvents: hidden ? "none" : "auto",
+                  filter: d === 0 ? "none" : "brightness(0.55) saturate(0.8)",
+                }}
+              >
+                <img src={src} alt={`Gallery image ${i + 1}`} draggable={false} className="h-full w-full object-cover" />
+                {d === 0 && (
+                  <>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                    <span className="absolute bottom-4 right-4 flex items-center gap-2 rounded-full bg-black/40 px-4 py-2 text-xs font-semibold text-white backdrop-blur-md">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8V4h4M20 8V4h-4M4 16v4h4M20 16v4h-4" />
+                      </svg>
+                      View fullscreen
+                    </span>
+                  </>
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Autoplay progress */}
+        <div className="mx-auto mt-8 h-1 w-full max-w-md overflow-hidden rounded-full bg-white/10">
+          <div
+            key={`${active}-${paused}`}
+            className="h-full origin-left rounded-full bg-ember-500"
+            style={{
+              animation: paused || count < 2 ? "none" : `gallery-progress ${AUTOPLAY_MS}ms linear forwards`,
+              transform: paused ? "scaleX(0)" : undefined,
+            }}
+          />
+        </div>
+
+        {/* Thumbnails */}
+        <div ref={thumbsRef} className="mt-6 flex gap-3 overflow-x-auto pb-2 scroll-smooth [scrollbar-width:none]">
+          {images.map((src, i) => (
+            <button
+              key={src}
+              onClick={() => go(i)}
+              aria-label={`Show image ${i + 1}`}
+              className={`relative h-16 w-24 sm:h-20 sm:w-28 shrink-0 overflow-hidden rounded-xl transition-all duration-300 ${
+                i === active ? "ring-2 ring-ember-500 ring-offset-2 ring-offset-jungle-950" : "opacity-50 hover:opacity-100"
+              }`}
             >
-              <Image
-                src={image.src}
-                alt={`Gallery image ${index + 1}`}
-                fill
-                className="object-cover transition-transform duration-500 group-hover:scale-110"
-                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-              />
-              {/* Hover Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center transform scale-0 group-hover:scale-100 transition-transform duration-300">
-                    <svg
-                      className="w-6 h-6 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"
-                      />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              {/* Image Number */}
-              <div className="absolute bottom-3 right-3 bg-black/50 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                {index + 1} / {imageGallery.length}
-              </div>
-            </div>
+              <img src={src} alt="" loading="lazy" className="h-full w-full object-cover" />
+            </button>
           ))}
+        </div>
+
+        {/* Mobile arrows */}
+        <div className="mt-6 flex justify-center gap-3 md:hidden">
+          <Arrow dir="left" onClick={prev} />
+          <Arrow dir="right" onClick={next} />
         </div>
       </div>
 
-      {/* Modal */}
-      {currentImage && (
-        <Modal
-          isOpen={isOpen}
-          onRequestClose={closeModal}
-          contentLabel="Image Preview"
-          className="fixed inset-0 z-50 flex justify-center items-center outline-none"
-          overlayClassName="fixed inset-0 bg-black/90 z-50"
-          ariaHideApp={false}
-        >
-          <div className="relative w-full h-full flex items-center justify-center p-4">
-            {/* Close Button */}
-            <button
-              className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center text-white transition-colors duration-200"
-              onClick={closeModal}
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-
-            {/* Previous Button */}
-            <button
-              className="absolute left-4 z-10 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center text-white transition-colors duration-200"
-              onClick={goToPrevious}
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-
-            {/* Image */}
-            <div className="relative max-w-5xl max-h-[80vh] w-full h-full">
-              <Image
-                src={currentImage.src}
-                alt="Preview image"
-                fill
-                className="object-contain"
-                sizes="100vw"
-              />
-            </div>
-
-            {/* Next Button */}
-            <button
-              className="absolute right-4 z-10 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center text-white transition-colors duration-200"
-              onClick={goToNext}
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-
-            {/* Image Counter */}
-            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm">
-              {currentIndex + 1} / {imageGallery.length}
-            </div>
-          </div>
-        </Modal>
-      )}
-    </div>
+      {/* Lightbox */}
+      <Modal
+        isOpen={lightbox}
+        onRequestClose={() => setLightbox(false)}
+        contentLabel="Image preview"
+        className="fixed inset-0 z-50 flex items-center justify-center outline-none"
+        overlayClassName="fixed inset-0 z-50 bg-black/95"
+        ariaHideApp={false}
+      >
+        <div className="relative flex h-full w-full items-center justify-center p-4">
+          <button
+            onClick={() => setLightbox(false)}
+            aria-label="Close"
+            className="absolute right-4 top-4 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white hover:bg-ember-500"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+          <Arrow dir="left" onClick={prev} className="absolute left-4 z-10" />
+          <img src={images[active]} alt="Preview" className="max-h-[85vh] max-w-full rounded-xl object-contain" />
+          <Arrow dir="right" onClick={next} className="absolute right-4 z-10" />
+          <p className="absolute bottom-5 left-1/2 -translate-x-1/2 rounded-full bg-white/10 px-4 py-1.5 text-sm text-white">
+            {active + 1} / {count}
+          </p>
+        </div>
+      </Modal>
+    </section>
   );
 };
 

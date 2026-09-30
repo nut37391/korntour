@@ -124,7 +124,7 @@ export default function Terms() {
           Subdistrict, Mueang Chiang Mai District, Chiang Mai, 51000
         </p>
         <p>
-          <strong>Email</strong>: ChiangmaiFriendlyTour.cnx@gmail.com
+          <strong>Email</strong>: Samoengjungletubing@gmail.com
         </p>
       </div>
     </div>

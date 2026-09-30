@@ -1,14 +1,25 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import { z } from "zod";
 import { useState } from "react";
 import axios from "axios";
-import "@fortawesome/fontawesome-free/css/all.min.css";
 
 import { TextInput, Button, TextArea, MapComponent } from "../component";
+import { JungleBackdrop, QrCard } from "../component/Jungle";
+import { site } from "../data/site";
+import {
+  EnvelopeIcon,
+  FacebookIcon,
+  InstagramIcon,
+  LineIcon,
+  MapMarkerIcon,
+  PhoneIcon,
+  TikTokIcon,
+} from "../component/Icons";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-export default function ContactClient() {
+export default function ContactClient({ qr, banner }) {
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState(false);
   const [lastname, setLastame] = useState(false);
@@ -148,264 +159,255 @@ export default function ContactClient() {
     }
   };
 
+  const info = [
+    {
+      icon: <PhoneIcon className="w-7 h-7" />,
+      label: "Phone",
+      lines: [{ text: site.phoneDisplay, href: `tel:${site.phone}` }, { text: "Available 24/7" }],
+    },
+    {
+      icon: <MapMarkerIcon className="w-7 h-7" />,
+      label: "Address",
+      lines: site.address.map((text) => ({ text })),
+    },
+    {
+      icon: <EnvelopeIcon className="w-7 h-7" />,
+      label: "Email",
+      lines: [{ text: site.email, href: `mailto:${site.email}` }, { text: "We reply within 24 hours" }],
+    },
+  ];
+
+  const socials = [
+    { href: site.social.facebook, label: "Facebook", Icon: FacebookIcon },
+    { href: site.social.instagram, label: "Instagram", Icon: InstagramIcon },
+    { href: site.social.tiktok, label: "TikTok", Icon: TikTokIcon },
+    { href: site.social.line, label: "LINE", Icon: LineIcon },
+  ];
+
+  const faqs = [
+    {
+      q: "Do you offer hotel pickup?",
+      a: "Yes — round-trip hotel transfers are included in every program. Pickup is between 8:00 and 8:30 AM and we drop you back at your hotel around 5:30 – 6:00 PM.",
+    },
+    {
+      q: "How do I book a trip?",
+      a: "Book online on any program page and pay securely by credit or debit card. You can also call us or send a message on LINE.",
+    },
+    {
+      q: "What's your cancellation policy?",
+      a: "Cancel up to 24 hours in advance for a full refund. You always get a full refund if we cancel due to force majeure.",
+    },
+    {
+      q: "What should I bring?",
+      a: "Sunblock, a swimming suit, insect spray and a change of clothes. We provide tubing equipment, life jackets and drinking water.",
+    },
+    {
+      q: "Who is the tubing not suitable for?",
+      a: "People with back problems, non-swimmers, people with mobility impairments and babies under 1 year.",
+    },
+    {
+      q: "Is lunch included?",
+      a: "Yes, every program includes a traditional Thai lunch.",
+    },
+  ];
+
+  // Dark filled inputs to match the page (NextUI slot classes).
+  const field = {
+    inputWrapper:
+      "bg-white/[0.04] border-white/10 rounded-md data-[hover=true]:border-ember-500/60 group-data-[focus=true]:border-ember-500",
+    input: "!text-white placeholder:text-white/35",
+    label: "!text-white/60 text-xs uppercase tracking-widest",
+  };
+
+  const Accent = ({ children }) => (
+    <p className="text-center text-2xl italic text-ember-400 sm:text-3xl">{children}</p>
+  );
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-navy-blue via-royal-blue to-ocean-blue py-20 px-6">
-        <div className="absolute inset-0 opacity-10">
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-            }}
-          />
-        </div>
-        <div className="relative max-w-[1440px] mx-auto text-center">
-          <span className="inline-block px-4 py-2 mb-4 text-sm font-semibold text-royal-blue bg-light-gold rounded-full">
-            Get In Touch
-          </span>
-          <h1 className="text-4xl lg:text-5xl font-bold text-white mb-4">
-            Contact Us
-          </h1>
-          <p className="text-lg text-white/80 max-w-2xl mx-auto">
-            Have questions about our tours? We&apos;d love to hear from you.
-            Send us a message and we&apos;ll respond as soon as possible.
-          </p>
-        </div>
-      </section>
-
-      {/* Contact Info Cards */}
-      <section className="py-12 px-6 -mt-8">
-        <div className="max-w-5xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Location Card */}
-            <div className="bg-white rounded-2xl shadow-lg p-6 text-center hover:shadow-xl transition-shadow duration-300">
-              <div className="w-14 h-14 bg-royal-blue/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i className="fas fa-map-marker-alt text-2xl text-royal-blue" />
-              </div>
-              <h3 className="font-bold text-gray-900 mb-2">Visit Us</h3>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                6/1 Kamphaeng Din Road 2,<br />
-                Chang Khlan, Mueang Chiang Mai,<br />
-                Chiang Mai 51000
-              </p>
-            </div>
-
-            {/* Phone Card */}
-            <div className="bg-white rounded-2xl shadow-lg p-6 text-center hover:shadow-xl transition-shadow duration-300">
-              <div className="w-14 h-14 bg-royal-blue/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i className="fas fa-phone text-2xl text-royal-blue" />
-              </div>
-              <h3 className="font-bold text-gray-900 mb-2">Call Us</h3>
-              <a
-                href="tel:+66622830334"
-                className="text-royal-blue font-semibold hover:text-ocean-blue transition-colors"
-              >
-                (66) 62-283-0334
-              </a>
-              <p className="text-sm text-gray-500 mt-1">Available 24/7</p>
-            </div>
-
-            {/* Email Card */}
-            <div className="bg-white rounded-2xl shadow-lg p-6 text-center hover:shadow-xl transition-shadow duration-300">
-              <div className="w-14 h-14 bg-royal-blue/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i className="fas fa-envelope text-2xl text-royal-blue" />
-              </div>
-              <h3 className="font-bold text-gray-900 mb-2">Email Us</h3>
-              <a
-                href="mailto:ChiangmaiFriendlyTour.cnx@gmail.com"
-                className="text-royal-blue font-semibold hover:text-ocean-blue transition-colors text-sm"
-              >
-                ChiangmaiFriendlyTour.cnx@gmail.com
-              </a>
-              <p className="text-sm text-gray-500 mt-1">We reply within 24 hours</p>
-            </div>
+    <div className="min-h-screen bg-jungle-950 text-white">
+      {/* Photo banner */}
+      <section className="px-4 pt-4 lg:px-6">
+        <div className="relative flex h-[340px] items-center justify-center overflow-hidden rounded-[1.5rem] sm:h-[420px]">
+          {banner ? (
+            <img src={banner} alt="" className="absolute inset-0 h-full w-full object-cover" />
+          ) : (
+            <JungleBackdrop />
+          )}
+          <div className="absolute inset-0 bg-gradient-to-b from-jungle-950/70 via-jungle-950/50 to-jungle-950/80" />
+          <div className="relative text-center">
+            <h1 className="border-[3px] border-white px-6 py-3 font-display uppercase text-4xl tracking-wide sm:px-10 sm:text-6xl">
+              Contact <span className="text-ember-500">Us</span>
+            </h1>
+            <p className="mt-5 text-xs font-semibold uppercase tracking-[0.35em] text-white/80">
+              {site.name}
+            </p>
           </div>
         </div>
       </section>
 
-      {/* Main Content */}
-      <section className="py-12 px-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* Contact Form */}
-            <div className="bg-white rounded-2xl shadow-lg p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                Send Us A Message
-              </h2>
-              <p className="text-gray-600 mb-8">
-                Fill out the form below and we&apos;ll get back to you shortly.
-              </p>
+      {/* Info columns */}
+      <section className="px-5 pt-20 lg:px-10">
+        <Accent>Get in touch with us!</Accent>
+        <div className="mx-auto mt-12 grid max-w-5xl md:grid-cols-3">
+          {info.map((item, i) => (
+            <div
+              key={item.label}
+              className={`flex flex-col items-center px-6 py-6 text-center ${
+                i > 0 ? "border-t border-ember-500/60 md:border-l md:border-t-0" : ""
+              }`}
+            >
+              <span className="text-ember-400">{item.icon}</span>
+              <p className="mt-4 text-sm font-bold uppercase tracking-[0.25em] text-ember-400">{item.label}</p>
+              <div className="mt-3 space-y-1 text-sm text-white/75">
+                {item.lines.map((line) =>
+                  line.href ? (
+                    <a key={line.text} href={line.href} className="block break-all font-semibold text-white hover:text-ember-400">
+                      {line.text}
+                    </a>
+                  ) : (
+                    <p key={line.text}>{line.text}</p>
+                  )
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
 
-              <form onSubmit={handleSubmit} onChange={onValidates}>
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <TextInput
-                    name="name"
-                    id="id"
-                    label="First Name"
-                    placeholder="John"
-                    isInvalid={name}
-                    color={name ? "danger" : "default"}
-                    errorMessage="Please enter your name"
-                  />
-                  <TextInput
-                    name="lastname"
-                    label="Last Name"
-                    placeholder="Doe"
-                    isInvalid={lastname}
-                    color={lastname ? "danger" : "default"}
-                    errorMessage="Please enter your last name"
-                  />
-                </div>
-
-                <div className="mb-4">
-                  <TextInput
-                    name="email"
-                    label="Email Address"
-                    type="email"
-                    placeholder="john@example.com"
-                    isInvalid={email}
-                    color={email ? "danger" : "default"}
-                    errorMessage="Please enter a valid email"
-                  />
-                </div>
-
-                <div className="mb-4">
-                  <p className="text-sm font-medium text-gray-700 mb-2">Phone Number</p>
-                  <div className="flex gap-3">
-                    <div className="w-24">
-                      <TextInput
-                        name="code"
-                        isInvalid={code}
-                        color={code ? "danger" : "default"}
-                        errorMessage="Required"
-                        placeholder="+66"
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <TextInput
-                        name="tel"
-                        placeholder="62-283-0334"
-                        isInvalid={tel}
-                        color={tel ? "danger" : "default"}
-                        errorMessage="Please enter a valid phone number"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mb-6">
-                  <TextArea
-                    name="message"
-                    label="Your Message"
-                    placeholder="Tell us about your travel plans..."
-                    isInvalid={msg}
-                    color={msg ? "danger" : "default"}
-                    errorMessage="Please enter your message"
-                  />
-                </div>
-
-                <Button
-                  type="submit"
-                  text="Send Message"
-                  size="w-full h-12"
-                  isLoading={isLoading}
+      {/* Form */}
+      <section className="px-5 pt-20 lg:px-10">
+        <div className="mx-auto max-w-2xl">
+          <p className="text-center text-sm font-semibold uppercase leading-7 tracking-[0.2em] text-white/80">
+            If you have any questions
+            <br />
+            please do not hesitate to send us a message.
+          </p>
+          <form onSubmit={handleSubmit} onChange={onValidates} className="mt-10">
+            <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
+              <TextInput
+                name="name"
+                id="id"
+                label="First Name"
+                placeholder="John"
+                isInvalid={name}
+                color={name ? "danger" : "default"}
+                errorMessage="Please enter your name"
+                classNames={field}
+              />
+              <TextInput
+                name="lastname"
+                label="Last Name"
+                placeholder="Doe"
+                isInvalid={lastname}
+                color={lastname ? "danger" : "default"}
+                errorMessage="Please enter your last name"
+                classNames={field}
+              />
+            </div>
+            <TextInput
+              name="email"
+              label="Email Address"
+              type="email"
+              placeholder="john@example.com"
+              isInvalid={email}
+              color={email ? "danger" : "default"}
+              errorMessage="Please enter a valid email"
+              classNames={field}
+            />
+            <p className="mb-2 text-xs uppercase tracking-widest text-white/60">Phone Number</p>
+            <div className="flex gap-3">
+              <div className="w-24">
+                <TextInput
+                  name="code"
+                  isInvalid={code}
+                  color={code ? "danger" : "default"}
+                  errorMessage="Required"
+                  placeholder="+66"
+                  classNames={field}
                 />
-                <ToastContainer autoClose={3000} />
-              </form>
-            </div>
-
-            {/* Map */}
-            <div className="flex flex-col">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                Find Us Here
-              </h2>
-              <p className="text-gray-600 mb-6">
-                Visit our office in the heart of Chiang Mai.
-              </p>
-              <div className="flex-1 min-h-[400px] rounded-2xl overflow-hidden shadow-lg">
-                <MapComponent />
               </div>
-
-              {/* Social Links */}
-              <div className="mt-6 p-6 bg-white rounded-2xl shadow-lg">
-                <h3 className="font-bold text-gray-900 mb-4">Follow Us</h3>
-                <div className="flex gap-4">
-                  <a
-                    href="https://www.facebook.com/profile.php?id=100094070260358"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-12 h-12 bg-royal-blue/10 rounded-full flex items-center justify-center hover:bg-gold hover:text-white text-royal-blue transition-all duration-300"
-                  >
-                    <i className="fab fa-facebook-f text-lg" />
-                  </a>
-                  <a
-                    href="https://www.instagram.com/elephantcaregrandcanyonjumping"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-12 h-12 bg-royal-blue/10 rounded-full flex items-center justify-center hover:bg-gold hover:text-white text-royal-blue transition-all duration-300"
-                  >
-                    <i className="fab fa-instagram text-lg" />
-                  </a>
-                  <a
-                    href="#"
-                    className="w-12 h-12 bg-royal-blue/10 rounded-full flex items-center justify-center hover:bg-gold hover:text-white text-royal-blue transition-all duration-300"
-                  >
-                    <i className="fab fa-youtube text-lg" />
-                  </a>
-                  <a
-                    href="https://line.me"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-12 h-12 bg-royal-blue/10 rounded-full flex items-center justify-center hover:bg-gold hover:text-white text-royal-blue transition-all duration-300"
-                  >
-                    <i className="fab fa-line text-lg" />
-                  </a>
-                </div>
+              <div className="flex-1">
+                <TextInput
+                  name="tel"
+                  placeholder="81-234-5678"
+                  isInvalid={tel}
+                  color={tel ? "danger" : "default"}
+                  errorMessage="Please enter a valid phone number"
+                  classNames={field}
+                />
               </div>
             </div>
-          </div>
+            <TextArea
+              name="message"
+              label="Your Message"
+              placeholder="Which trip, your dates and number of guests..."
+              isInvalid={msg}
+              color={msg ? "danger" : "default"}
+              errorMessage="Please enter your message"
+              classNames={field}
+            />
+            <div className="mt-4 flex justify-center">
+              <Button
+                type="submit"
+                text="Send Message"
+                size="h-12 px-10 text-sm font-bold uppercase tracking-widest"
+                isLoading={isLoading}
+              />
+            </div>
+            <ToastContainer autoClose={3000} />
+          </form>
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className="py-16 px-6 bg-Gray93">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
-            Frequently Asked Questions
-          </h2>
-          <p className="text-gray-600 mb-10">
-            Quick answers to common questions
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
-            {[
-              {
-                q: "What are your operating hours?",
-                a: "We operate tours daily from 7:00 AM to 6:00 PM. Our customer service is available 24/7.",
-              },
-              {
-                q: "Do you offer hotel pickup?",
-                a: "Yes! We provide free hotel pickup and drop-off for all our tours within Chiang Mai city.",
-              },
-              {
-                q: "How do I book a tour?",
-                a: "You can book through our website, email, or call us directly. We accept various payment methods.",
-              },
-              {
-                q: "What's your cancellation policy?",
-                a: "Free cancellation up to 24 hours before the tour. Full refund will be processed within 5-7 days.",
-              },
-            ].map((faq, index) => (
-              <div
-                key={index}
-                className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow"
-              >
-                <h3 className="font-bold text-gray-900 mb-2">{faq.q}</h3>
-                <p className="text-sm text-gray-600">{faq.a}</p>
-              </div>
-            ))}
+      {/* Connect */}
+      <section className="px-5 pt-20 lg:px-10">
+        <Accent>Connect with us!</Accent>
+        <div className="mt-8 flex justify-center gap-4">
+          {socials.map(({ href, label, Icon }) => (
+            <a
+              key={label}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={label}
+              className="flex h-12 w-12 items-center justify-center rounded-lg bg-ember-500 text-white transition-all hover:-translate-y-1 hover:bg-ember-400"
+            >
+              <Icon className="w-5 h-5" />
+            </a>
+          ))}
+        </div>
+        {qr && (
+          <div className="mt-10 flex justify-center">
+            <QrCard src={qr} dark />
           </div>
+        )}
+      </section>
+
+      {/* FAQ */}
+      <section className="px-5 pt-24 lg:px-10">
+        <Accent>Good to know</Accent>
+        <div className="mx-auto mt-10 max-w-3xl space-y-3">
+          {faqs.map((faq) => (
+            <details
+              key={faq.q}
+              className="group rounded-xl border border-white/10 bg-white/[0.03] px-6 py-5 transition-colors open:border-ember-500/40 open:bg-white/[0.06]"
+            >
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold [&::-webkit-details-marker]:hidden">
+                {faq.q}
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/10 text-lg transition-transform duration-300 group-open:rotate-45 group-open:bg-ember-500">
+                  +
+                </span>
+              </summary>
+              <p className="mt-3 text-sm leading-relaxed text-white/70">{faq.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      {/* Map */}
+      <section className="px-4 pb-4 pt-24 lg:px-6">
+        <div className="h-[420px] overflow-hidden rounded-[1.5rem]">
+          <MapComponent dark />
         </div>
       </section>
     </div>

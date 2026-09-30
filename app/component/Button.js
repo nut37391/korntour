@@ -5,7 +5,7 @@ import { Button } from "@nextui-org/button";
 const TButton = ({
   text,
   onClick,
-  color = "bg-royal-blue hover:bg-ocean-blue",
+  color = "bg-ember-500 hover:bg-ember-600",
   size = "h-12",
   textColor = "text-white",
   formAction,
@@ -18,7 +18,7 @@ const TButton = ({
     <Button
       // color="primary"
       className={style}
-      radius="sm"
+      radius="full"
       onClick={onClick}
       formAction={formAction}
       type={type}

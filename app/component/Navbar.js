@@ -1,120 +1,102 @@
 "use client";
-import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import React, { useState } from "react";
-const Navbar = () => {
-  const [isCLick, setIsClick] = useState(false);
-  const toggleNavbar = () => {
-    setIsClick(!isCLick);
-  };
-  return (
-    <>
-      <nav className="bg-navy-blue py-3 px-5">
-        <div className="max-w-[1280px] mx-auto">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex-shrink-0">
-                <a href="/" className="text-white">
-                  <Image
-                    src="/images/favicon.png"
-                    alt="logo"
-                    width={56}
-                    height={56}
-                    className="rounded-full"
-                  />
-                </a>
-              </div>
-              <h3 className="text-white font-medium text-lg hidden sm:block">Chiang Mai Friendly Tour</h3>
-            </div>
+import { site } from "../data/site";
 
-            <div className="hidden md:block">
-              <div className="ml-4 flex items-center space-x-4">
-                <Link
-                  href="/"
-                  className="text-white hover:bg-gold hover:text-navy-blue font-medium rounded-lg p-2 transition-all duration-300"
-                >
-                  HOME
-                </Link>
-                <Link
-                  href="/services"
-                  className="text-white hover:bg-gold hover:text-navy-blue font-medium rounded-lg p-2 transition-all duration-300"
-                >
-                  SERVICES
-                </Link>
-                <Link
-                  href="/contact-us"
-                  className="text-white hover:bg-gold hover:text-navy-blue font-medium rounded-lg p-2 transition-all duration-300"
-                >
-                  CONTACT
-                </Link>
-              </div>
-            </div>
-            <div className="md:hidden flex items-center">
-              <button
-                className="inline-flex items-center justify-center p-2 rounded-md text-white hover:text-white focus:outline-none focus:ring-2"
-                onClick={toggleNavbar}
+const links = [
+  { href: "/", label: "Home" },
+  { href: "/programs", label: "Programs" },
+  { href: "/contact-us", label: "Contact" },
+];
+
+const Navbar = () => {
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+  const isHome = pathname === "/";
+
+  const isActive = (href) =>
+    href === "/" ? pathname === "/" : pathname?.startsWith(href);
+
+  return (
+    <nav
+      className={`${
+        isHome ? "absolute inset-x-0 top-0 z-30 bg-transparent" : "relative bg-jungle-950"
+      }`}
+    >
+      <div className="max-w-[1280px] mx-auto px-5 lg:px-10 pt-6 pb-4">
+        <div className="flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-3">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={site.logo} alt={site.name} className="h-12 sm:h-14 w-auto rounded-lg shadow-md" />
+            <span className="hidden sm:block font-display text-sm lg:text-base uppercase tracking-wide text-ember-500">
+              {site.name}
+            </span>
+          </Link>
+
+          <div className="hidden md:flex items-center gap-2">
+            {links.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`rounded-full px-4 py-1.5 text-sm font-semibold transition-colors ${
+                  isActive(link.href)
+                    ? "bg-ember-500 text-white"
+                    : "text-white hover:text-ember-400"
+                }`}
               >
-                {isCLick ? (
-                  <svg
-                    className="h-6 w-6"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokewidth={2}
-                      d="6 18L18 6M6 6112 12"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    className="h-6 w-6"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fi11="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 6h16M4 12h16m-7 6h7"
-                    />
-                  </svg>
-                )}
-              </button>
-            </div>
+                {link.label}
+              </Link>
+            ))}
+            <a
+              href={`tel:${site.phone}`}
+              className="ml-3 rounded-full border border-white/40 px-4 py-1.5 text-sm font-semibold text-white hover:border-ember-500 hover:text-ember-400 transition-colors"
+            >
+              {site.phoneDisplay}
+            </a>
           </div>
+
+          <button
+            className="md:hidden inline-flex items-center justify-center p-2 rounded-md text-white"
+            onClick={() => setOpen(!open)}
+            aria-label="Toggle menu"
+          >
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              {open ? (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
+              )}
+            </svg>
+          </button>
         </div>
-        {isCLick && (
-          <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+
+        {/* Accent line under the nav, like the reference design */}
+        <div className="relative mt-4 h-px bg-white/40">
+          <span className="absolute left-[33%] top-1/2 -translate-y-1/2 h-[3px] w-[30%] bg-ember-500 rounded-full" />
+        </div>
+
+        {open && (
+          <div className="md:hidden mt-3 space-y-1 rounded-2xl bg-jungle-950/95 p-3 backdrop-blur">
+            {links.map((link) => (
               <Link
-                href="/"
-                className="text-white block hover:bg-gold hover:text-navy-blue font-medium rounded-lg p-2 transition-all duration-300"
+                key={link.href}
+                href={link.href}
+                onClick={() => setOpen(false)}
+                className={`block rounded-lg px-3 py-2 font-semibold ${
+                  isActive(link.href) ? "bg-ember-500 text-white" : "text-white hover:bg-white/10"
+                }`}
               >
-                Home
+                {link.label}
               </Link>
-              <Link
-                href="/services"
-                className="text-white block hover:bg-gold hover:text-navy-blue font-medium rounded-lg p-2 transition-all duration-300"
-              >
-                Tours
-              </Link>
-              <Link
-                href="/contact-us"
-                className="text-white block hover:bg-gold hover:text-navy-blue font-medium rounded-lg p-2 transition-all duration-300"
-              >
-                Contact Us
-              </Link>
-            </div>
+            ))}
+            <a href={`tel:${site.phone}`} className="block rounded-lg px-3 py-2 font-semibold text-ember-400">
+              {site.phoneDisplay}
+            </a>
           </div>
         )}
-      </nav>
-    </>
+      </div>
+    </nav>
   );
 };
 
