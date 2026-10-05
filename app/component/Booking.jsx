@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import Script from "next/script";
 import { TextInput, TextArea, DatePicker } from "../component";
 import { JungleBackdrop, QrCard } from "./Jungle";
+import CountryCodeSelect, { dialCodeOf } from "./CountryCodeSelect";
 import { CheckIcon, LineIcon, PhoneIcon } from "./Icons";
 import { site } from "../data/site";
 import { getDict } from "../i18n/dict";
@@ -39,11 +40,14 @@ const Booking = ({ tour, tourLabel = tour, price, qr, lang = "en" }) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [formErrors, setFormErrors] = useState({});
+  // ISO country for the phone number; formValues.code holds its dial code ("+66").
+  const defaultCountry = lang === "th" ? "TH" : null;
+  const [country, setCountry] = useState(defaultCountry);
   const [formValues, setFormValues] = useState({
     name: "",
     lastname: "",
     email: "",
-    code: "",
+    code: defaultCountry ? dialCodeOf(defaultCountry) : "",
     tel: "",
     msg: "",
     adults: "2",
@@ -69,7 +73,7 @@ const Booking = ({ tour, tourLabel = tour, price, qr, lang = "en" }) => {
     name: z.string().min(1, t.errors.name),
     lastname: z.string().min(1, t.errors.lastname),
     email: z.string().email(t.errors.email),
-    code: z.string().min(3, t.errors.code),
+    code: z.string().min(2, t.errors.code),
     tel: z.string().regex(phoneRegex, t.errors.tel),
     msg: z.string(),
     adults: z
@@ -92,6 +96,12 @@ const Booking = ({ tour, tourLabel = tour, price, qr, lang = "en" }) => {
     const { name, value } = e.target;
     setFormValues((prevValues) => ({ ...prevValues, [name]: value }));
     setFormErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
+  };
+
+  const handleCountryChange = (iso) => {
+    setCountry(iso);
+    setFormValues((prevValues) => ({ ...prevValues, code: iso ? dialCodeOf(iso) : "" }));
+    setFormErrors((prevErrors) => ({ ...prevErrors, code: "" }));
   };
 
   const handleDateChange = (date) => {
@@ -352,16 +362,18 @@ const Booking = ({ tour, tourLabel = tour, price, qr, lang = "en" }) => {
               onChange={handleChange}
             />
             <p className="text-sm font-medium text-gray-700 mb-2">{t.phone}</p>
-            <div className="flex gap-3">
-              <div className="w-24">
-                <TextInput
-                  name="code"
+            <div className="flex flex-col sm:flex-row sm:gap-3">
+              <div className="sm:w-64">
+                <CountryCodeSelect
+                  lang={lang}
                   aria-label={`${t.phone} – ${c.countryCode}`}
+                  placeholder={c.selectCountry}
+                  listboxProps={{ emptyContent: c.noCountry }}
+                  selectedKey={country}
+                  onSelectionChange={handleCountryChange}
                   isInvalid={!!formErrors.code}
                   color={!!formErrors.code ? "danger" : "default"}
                   errorMessage={formErrors.code}
-                  placeholder="+66"
-                  onChange={handleChange}
                 />
               </div>
               <div className="flex-1">
