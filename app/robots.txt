@@ -1,4 +1,0 @@
-User-agent: *
-Disallow: /payment-success/
-Disallow: /thank-you/
-Sitemap: https://chiangmaifriendlytour.com/sitemap.xml

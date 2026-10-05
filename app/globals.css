@@ -97,12 +97,69 @@ body {
   }
 }
 
-/* Smooth scroll */
+/* Smooth scroll and a slim scrollbar in the jungle theme */
 html {
   scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: #2f7a52 #0a1d14;
+}
+html::-webkit-scrollbar {
+  width: 10px;
+}
+html::-webkit-scrollbar-track {
+  background: #0a1d14;
+}
+html::-webkit-scrollbar-thumb {
+  background: #2f7a52;
+  border: 2px solid #0a1d14;
+  border-radius: 9999px;
+}
+html::-webkit-scrollbar-thumb:hover {
+  background: #ff6a13;
 }
 
 /* Card hover glow effect */
 .hover\:shadow-2xl:hover {
   box-shadow: 0 25px 50px -12px rgba(10, 29, 20, 0.35);
+}
+
+/* Thai pages: the display headings use tight line-heights made for Latin caps,
+   which would clip Thai vowels and tone marks above/below the line. */
+html[lang="th"] :is(h1, h2, h3).font-display,
+html[lang="th"] .font-display :is(h1, h2, h3) {
+  line-height: 1.25;
+  letter-spacing: 0;
+}
+
+/* Thai pages: handwritten accent lines use Mali for the whole line (punctuation included),
+   one step smaller because Mali's Thai glyphs run much larger than Caveat's Latin ones. */
+html[lang="th"] .font-hand {
+  font-family: var(--font-hand-th), var(--font-hand), cursive;
+  font-size: 1.5rem;
+  line-height: 2.25rem;
+}
+@media (min-width: 640px) {
+  html[lang="th"] .font-hand {
+    font-size: 1.75rem;
+  }
+}
+
+/* Thai pages: the wide letter-spacing used for English uppercase labels
+   (tracking-widest etc.) pulls Thai syllables apart and makes them hard to read. */
+html[lang="th"] [class*="tracking-"] {
+  letter-spacing: 0.01em;
+}
+
+/* Visitors who ask the OS for reduced motion: no smooth scrolling, animations or transitions. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

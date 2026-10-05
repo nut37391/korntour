@@ -1,5 +1,7 @@
 // โปรแกรมทัวร์ทั้งหมดของเว็บ — แก้ชื่อ ราคา และรายละเอียดได้ที่ไฟล์นี้
 // รูปภาพของแต่ละโปรแกรมให้วางไว้ที่ public/programs/<folder>/ แล้วจะแสดงบนเว็บเอง
+// คำแปลภาษาไทย (หน้า /th) อยู่ที่ programs.th.js
+import { programsTh } from "./programs.th";
 
 const TUBING_STEP = {
   title: "Jungle Tubing",
@@ -178,4 +180,19 @@ export const programs = [
 
 export const getProgram = (slug) => programs.find((p) => p.slug === slug);
 
-export const includesLunch = (program) => program.included.some((item) => /lunch/i.test(item));
+// Checks the English data, so it works for localized programs too.
+export const includesLunch = (program) => getProgram(program.slug).included.some((item) => /lunch/i.test(item));
+
+/**
+ * The program in the given language (Thai text from programs.th.js).
+ * `nameEn` is always the English name (sent to the booking backend); `altName` is the
+ * name in the other language, shown as a small secondary label.
+ */
+export const localizeProgram = (program, lang) => ({
+  ...program,
+  ...(lang === "th" ? programsTh[program.slug] : {}),
+  nameEn: program.name,
+  altName: lang === "th" ? program.name : program.nameTh,
+});
+
+export const getPrograms = (lang) => programs.map((p) => localizeProgram(p, lang));

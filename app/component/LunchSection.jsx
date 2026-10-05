@@ -1,4 +1,6 @@
 import { PhotoOrPlaceholder } from "./Jungle";
+import { altOf } from "../data/imageAlts";
+import { getDict } from "../i18n/dict";
 
 const MAX_TILES = 5;
 
@@ -13,7 +15,8 @@ const LAYOUTS = {
 };
 
 // Food photos from public/programs/lunch — shown on the home page and on programs that include lunch.
-const LunchSection = ({ images, dark = true }) => {
+const LunchSection = ({ images, dark = true, lang = "en" }) => {
+  const t = getDict(lang).lunch;
   const tiles = images.length ? images.slice(0, MAX_TILES) : [null, null, null];
   const layout = LAYOUTS[tiles.length];
   const extra = images.length - tiles.length;
@@ -24,15 +27,14 @@ const LunchSection = ({ images, dark = true }) => {
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
           <div>
             <span className="inline-block rounded-full bg-ember-500 px-4 py-1 text-xs font-semibold uppercase tracking-widest text-white">
-              Lunch Included
+              {t.badge}
             </span>
             <h2 className="mt-4 font-display uppercase text-4xl sm:text-5xl leading-none">
-              Taste of <span className="text-ember-500">Samoeng</span>
+              {t.title1} <span className="text-ember-500">{t.title2}</span>
             </h2>
           </div>
           <p className={`max-w-md text-sm leading-relaxed ${dark ? "text-white/70" : "text-gray-700"}`}>
-            Refuel after the adventure with a fresh local Thai lunch, cooked by village families
-            with ingredients from the Samoeng valley.
+            {t.text}
           </p>
         </div>
 
@@ -41,8 +43,8 @@ const LunchSection = ({ images, dark = true }) => {
             <div key={i} className={`group relative overflow-hidden rounded-2xl ${layout[i]}`}>
               <PhotoOrPlaceholder
                 src={src}
-                alt={`Lunch ${i + 1}`}
-                label="Lunch"
+                alt={altOf(src, t.alt(i + 1), lang)}
+                label={t.placeholder}
                 className="transition-transform duration-700 group-hover:scale-105"
               />
               {i === tiles.length - 1 && extra > 0 && (

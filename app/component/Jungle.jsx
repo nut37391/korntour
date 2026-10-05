@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 // Shared visual building blocks for the Samoeng Jungle Tubing theme.
 import Link from "next/link";
+import { getDict } from "../i18n/dict";
 
 // Layered mountain / forest silhouette used when a section has no photo yet.
 export const JungleBackdrop = ({ className = "" }) => (
@@ -66,25 +67,25 @@ export const AccentRule = ({ pill, href, light = true }) => (
   </div>
 );
 
-export const QrCard = ({ src, dark = false }) =>
+export const QrCard = ({ src, dark = false, lang = "en" }) =>
   src ? (
     <div
       className={`inline-flex flex-col items-center gap-2 rounded-2xl p-4 ${
         dark ? "bg-white/10 backdrop-blur" : "bg-white shadow-lg"
       }`}
     >
-      <img src={src} alt="QR code" className="w-36 h-36 object-contain rounded-lg bg-white p-1" />
+      <img src={src} alt={getDict(lang).common.qrAlt} className="w-36 h-36 object-contain rounded-lg bg-white p-1" />
       <span className={`text-xs font-medium ${dark ? "text-white/80" : "text-gray-600"}`}>
-        Scan to contact us
+        {getDict(lang).common.scanQr}
       </span>
     </div>
   ) : null;
 
 // Header band for inner pages (Navbar sits above it on a solid background).
-export const PageHero = ({ eyebrow, title, accent, children, image }) => (
+export const PageHero = ({ eyebrow, title, accent, children, image, imageAlt = "" }) => (
   <section className="relative overflow-hidden bg-jungle-950 text-white">
     {image ? (
-      <img src={image} alt="" className="absolute inset-0 w-full h-full object-cover opacity-45" />
+      <img src={image} alt={imageAlt} className="absolute inset-0 w-full h-full object-cover opacity-45" />
     ) : (
       <JungleBackdrop />
     )}

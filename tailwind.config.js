@@ -31,8 +31,9 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        display: ["var(--font-display)", "var(--font-body)", "sans-serif"],
+        display: ["var(--font-display)", "var(--font-display-th)", "var(--font-body)", "sans-serif"],
         body: ["var(--font-body)", "sans-serif"],
+        hand: ["var(--font-hand)", "var(--font-hand-th)", "cursive"],
       },
       colors: {
         // Samoeng Jungle Tubing theme: deep jungle green + ember orange

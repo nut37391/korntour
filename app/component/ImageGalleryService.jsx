@@ -2,14 +2,15 @@
 "use client";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Modal from "react-modal";
+import { getDict } from "../i18n/dict";
 
 const AUTOPLAY_MS = 5000;
 const SWIPE_PX = 40;
 
-const Arrow = ({ dir, onClick, className = "" }) => (
+const Arrow = ({ dir, onClick, className = "", t }) => (
   <button
     onClick={onClick}
-    aria-label={dir === "left" ? "Previous image" : "Next image"}
+    aria-label={dir === "left" ? t.prev : t.next}
     className={`flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white backdrop-blur-md transition-all duration-300 hover:scale-110 hover:border-ember-500 hover:bg-ember-500 ${className}`}
   >
     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -19,12 +20,16 @@ const Arrow = ({ dir, onClick, className = "" }) => (
 );
 
 // Coverflow-style carousel with autoplay, thumbnails, swipe, keyboard and a fullscreen lightbox.
-const ImageGalleryService = ({ imageGallery }) => {
+const ImageGalleryService = ({ imageGallery, lang = "en" }) => {
+  const t = getDict(lang).gallery;
   const images = imageGallery.map((img) => img.src);
+  const alts = imageGallery.map((img, i) => img.alt || `Gallery image ${i + 1}`);
   const count = images.length;
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
   const [lightbox, setLightbox] = useState(false);
+  // No autoplay for visitors who ask the OS for reduced motion.
+  const [reducedMotion, setReducedMotion] = useState(false);
   const pointerX = useRef(null);
   const swiped = useRef(false);
   const thumbsRef = useRef(null);
@@ -33,16 +38,28 @@ const ImageGalleryService = ({ imageGallery }) => {
   const next = useCallback(() => go(active + 1), [go, active]);
   const prev = useCallback(() => go(active - 1), [go, active]);
 
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReducedMotion(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
+  const autoplay = !paused && !lightbox && !reducedMotion && count > 1;
+
   // Autoplay (restarts whenever the slide changes)
   useEffect(() => {
-    if (paused || lightbox || count < 2) return;
+    if (!autoplay) return;
     const t = setTimeout(next, AUTOPLAY_MS);
     return () => clearTimeout(t);
-  }, [active, paused, lightbox, next, count]);
+  }, [active, autoplay, next]);
 
   // Keyboard navigation
   useEffect(() => {
     const onKey = (e) => {
+      // Leave arrow keys alone while the visitor is typing (e.g. in the booking form below).
+      if (e.target.closest?.("input, textarea, select, [contenteditable='true']")) return;
       if (e.key === "ArrowRight") next();
       if (e.key === "ArrowLeft") prev();
       if (e.key === "Escape") setLightbox(false);
@@ -101,8 +118,8 @@ const ImageGalleryService = ({ imageGallery }) => {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
           <div>
-            <p className="text-ember-400 text-sm font-semibold uppercase tracking-widest">Explore The Trip</p>
-            <h2 className="mt-2 font-display uppercase text-5xl md:text-6xl text-white">Gallery</h2>
+            <p className="text-ember-400 text-sm font-semibold uppercase tracking-widest">{t.eyebrow}</p>
+            <h2 className="mt-2 font-display uppercase text-5xl md:text-6xl text-white">{t.title}</h2>
           </div>
           <div className="flex items-center gap-5">
             <p className="font-display text-white">
@@ -110,8 +127,8 @@ const ImageGalleryService = ({ imageGallery }) => {
               <span className="text-lg text-white/40"> / {pad(count)}</span>
             </p>
             <div className="hidden md:flex gap-3">
-              <Arrow dir="left" onClick={prev} />
-              <Arrow dir="right" onClick={next} />
+              <Arrow dir="left" onClick={prev} t={t} />
+              <Arrow dir="right" onClick={next} t={t} />
             </div>
           </div>
         </div>
@@ -136,7 +153,7 @@ const ImageGalleryService = ({ imageGallery }) => {
                   if (swiped.current) return (swiped.current = false);
                   d === 0 ? setLightbox(true) : go(i);
                 }}
-                aria-label={d === 0 ? "Open fullscreen" : `Show image ${i + 1}`}
+                aria-label={d === 0 ? t.open : t.show(i + 1)}
                 className="absolute left-1/2 top-0 h-full w-[78%] sm:w-[62%] lg:w-[58%] overflow-hidden rounded-3xl shadow-2xl shadow-black/50 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
                 style={{
                   transform: `translateX(calc(-50% + ${d * 58}%)) scale(${1 - abs * 0.16}) rotateY(${d * -8}deg)`,
@@ -146,7 +163,7 @@ const ImageGalleryService = ({ imageGallery }) => {
                   filter: d === 0 ? "none" : "brightness(0.55) saturate(0.8)",
                 }}
               >
-                <img src={src} alt={`Gallery image ${i + 1}`} draggable={false} className="h-full w-full object-cover" />
+                <img src={src} alt={alts[i]} draggable={false} className="h-full w-full object-cover" />
                 {d === 0 && (
                   <>
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
@@ -154,7 +171,7 @@ const ImageGalleryService = ({ imageGallery }) => {
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8V4h4M20 8V4h-4M4 16v4h4M20 16v4h-4" />
                       </svg>
-                      View fullscreen
+                      {t.fullscreen}
                     </span>
                   </>
                 )}
@@ -164,16 +181,18 @@ const ImageGalleryService = ({ imageGallery }) => {
         </div>
 
         {/* Autoplay progress */}
-        <div className="mx-auto mt-8 h-1 w-full max-w-md overflow-hidden rounded-full bg-white/10">
-          <div
-            key={`${active}-${paused}`}
-            className="h-full origin-left rounded-full bg-ember-500"
-            style={{
-              animation: paused || count < 2 ? "none" : `gallery-progress ${AUTOPLAY_MS}ms linear forwards`,
-              transform: paused ? "scaleX(0)" : undefined,
-            }}
-          />
-        </div>
+        {!reducedMotion && count > 1 && (
+          <div className="mx-auto mt-8 h-1 w-full max-w-md overflow-hidden rounded-full bg-white/10">
+            <div
+              key={`${active}-${autoplay}`}
+              className="h-full origin-left rounded-full bg-ember-500"
+              style={{
+                animation: autoplay ? `gallery-progress ${AUTOPLAY_MS}ms linear forwards` : "none",
+                transform: autoplay ? undefined : "scaleX(0)",
+              }}
+            />
+          </div>
+        )}
 
         {/* Thumbnails */}
         <div ref={thumbsRef} className="mt-6 flex gap-3 overflow-x-auto pb-2 scroll-smooth [scrollbar-width:none]">
@@ -181,7 +200,7 @@ const ImageGalleryService = ({ imageGallery }) => {
             <button
               key={src}
               onClick={() => go(i)}
-              aria-label={`Show image ${i + 1}`}
+              aria-label={t.show(i + 1)}
               className={`relative h-16 w-24 sm:h-20 sm:w-28 shrink-0 overflow-hidden rounded-xl transition-all duration-300 ${
                 i === active ? "ring-2 ring-ember-500 ring-offset-2 ring-offset-jungle-950" : "opacity-50 hover:opacity-100"
               }`}
@@ -193,8 +212,8 @@ const ImageGalleryService = ({ imageGallery }) => {
 
         {/* Mobile arrows */}
         <div className="mt-6 flex justify-center gap-3 md:hidden">
-          <Arrow dir="left" onClick={prev} />
-          <Arrow dir="right" onClick={next} />
+          <Arrow dir="left" onClick={prev} t={t} />
+          <Arrow dir="right" onClick={next} t={t} />
         </div>
       </div>
 
@@ -202,7 +221,7 @@ const ImageGalleryService = ({ imageGallery }) => {
       <Modal
         isOpen={lightbox}
         onRequestClose={() => setLightbox(false)}
-        contentLabel="Image preview"
+        contentLabel={t.preview}
         className="fixed inset-0 z-50 flex items-center justify-center outline-none"
         overlayClassName="fixed inset-0 z-50 bg-black/95"
         ariaHideApp={false}
@@ -210,16 +229,16 @@ const ImageGalleryService = ({ imageGallery }) => {
         <div className="relative flex h-full w-full items-center justify-center p-4">
           <button
             onClick={() => setLightbox(false)}
-            aria-label="Close"
+            aria-label={t.close}
             className="absolute right-4 top-4 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white hover:bg-ember-500"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
-          <Arrow dir="left" onClick={prev} className="absolute left-4 z-10" />
-          <img src={images[active]} alt="Preview" className="max-h-[85vh] max-w-full rounded-xl object-contain" />
-          <Arrow dir="right" onClick={next} className="absolute right-4 z-10" />
+          <Arrow dir="left" onClick={prev} className="absolute left-4 z-10" t={t} />
+          <img src={images[active]} alt={alts[active]} className="max-h-[85vh] max-w-full rounded-xl object-contain" />
+          <Arrow dir="right" onClick={next} className="absolute right-4 z-10" t={t} />
           <p className="absolute bottom-5 left-1/2 -translate-x-1/2 rounded-full bg-white/10 px-4 py-1.5 text-sm text-white">
             {active + 1} / {count}
           </p>

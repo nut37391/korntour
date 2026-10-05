@@ -2,9 +2,10 @@
 import Link from "next/link";
 import { site } from "../data/site";
 import { PhotoOrPlaceholder } from "./Jungle";
+import { programAlt } from "../data/imageAlts";
+import { getDict } from "../i18n/dict";
+import { localePath } from "../i18n";
 import { ArrowRightIcon, CertificateIcon, CheckIcon, StarIcon } from "./Icons";
-
-const PERKS = ["Hotel pickup & drop-off", "English-speaking guide", "Experienced safety staff", "Insurance included"];
 
 // Topographic contour lines used as a subtle background texture.
 const Topo = () => (
@@ -25,14 +26,16 @@ const Topo = () => (
 
 // "About us" block for the home page: photo collage, story, stats band and GetYourGuide links.
 // `programs` must include an `images` array (see app/page.jsx).
-const AboutSection = ({ programs }) => {
+const AboutSection = ({ programs, lang = "en" }) => {
+  const t = getDict(lang).about;
+  const href = (path) => localePath(lang, path);
   const [a, b, c] = programs;
   const gyg = programs.filter((p) => p.gygUrl);
   const stats = [
-    { value: `${site.experienceYears}+`, label: "Years of local guiding" },
-    { value: "TAT", label: "Licensed · 23/03998" },
-    { value: programs.length, label: "Adventures in Samoeng" },
-    { value: "100%", label: "Trips insured" },
+    { value: `${site.experienceYears}+`, label: t.statYears },
+    { value: "TAT", label: t.statLicensed },
+    { value: programs.length, label: t.statAdventures },
+    { value: "100%", label: t.statInsured },
   ];
 
   return (
@@ -44,52 +47,49 @@ const AboutSection = ({ programs }) => {
           <div className="relative mx-auto w-full max-w-[520px] pb-10 pl-6 pt-10 sm:pl-10">
             {/* Main photo */}
             <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] shadow-2xl shadow-jungle-950/30">
-              <PhotoOrPlaceholder src={b?.images[0]} alt={b?.name} label={b?.nameTh} />
+              <PhotoOrPlaceholder src={b?.images[0]} alt={b && programAlt(b, b.images[0], 0, lang)} label={b?.altName} />
               <div className="absolute inset-0 bg-gradient-to-t from-jungle-950/60 via-transparent to-transparent" />
             </div>
             {/* Tilted photo, top-left */}
             <div className="absolute left-0 top-0 w-[38%] rotate-[-6deg] overflow-hidden rounded-2xl border-[6px] border-white shadow-xl transition-transform duration-500 hover:rotate-0">
               <div className="aspect-square">
-                <PhotoOrPlaceholder src={a?.images[0]} alt={a?.name} label={a?.nameTh} />
+                <PhotoOrPlaceholder src={a?.images[0]} alt={a && programAlt(a, a.images[0], 0, lang)} label={a?.altName} />
               </div>
             </div>
             {/* Tilted photo, bottom-right */}
             <div className="absolute -right-2 bottom-0 w-[44%] rotate-[5deg] overflow-hidden rounded-2xl border-[6px] border-white shadow-xl transition-transform duration-500 hover:rotate-0 sm:-right-6">
               <div className="aspect-[4/3]">
-                <PhotoOrPlaceholder src={c?.images[0]} alt={c?.name} label={c?.nameTh} />
+                <PhotoOrPlaceholder src={c?.images[0]} alt={c && programAlt(c, c.images[0], 0, lang)} label={c?.altName} />
               </div>
             </div>
             {/* Floating badges */}
             <div className="absolute -top-2 right-2 flex h-28 w-28 rotate-12 flex-col items-center justify-center rounded-full bg-ember-500 text-center text-white shadow-xl shadow-ember-500/40 sm:right-0">
               <CertificateIcon className="h-6 w-6" />
               <span className="mt-1 font-display text-lg leading-none">TAT</span>
-              <span className="text-[10px] font-semibold uppercase tracking-widest">Licensed</span>
+              <span className="text-[10px] font-semibold uppercase tracking-widest">{t.licensed}</span>
             </div>
             <div className="absolute bottom-16 left-0 rounded-2xl bg-jungle-900 px-5 py-4 text-white shadow-xl sm:-left-4">
               <p className="font-display text-4xl leading-none text-ember-400">{site.experienceYears}+</p>
-              <p className="mt-1 text-xs font-semibold uppercase tracking-widest text-white/70">Years guiding</p>
+              <p className="mt-1 text-xs font-semibold uppercase tracking-widest text-white/70">{t.yearsGuiding}</p>
             </div>
           </div>
 
           <div>
             <span className="inline-block rounded-full bg-ember-500 px-4 py-1 text-xs font-semibold uppercase tracking-widest text-white">
-              About Us
+              {t.badge}
             </span>
             <h2 className="mt-5 font-display uppercase text-5xl sm:text-6xl leading-[0.95]">
-              Local guides,
-              <span className="block text-ember-600">real adventures</span>
+              {t.title1}
+              <span className="block text-ember-600">{t.title2}</span>
             </h2>
             <p className="mt-7 text-lg text-gray-700 leading-relaxed">
-              Samoeng Jungle Tubing is run by <strong className="text-jungle-900">{site.company}</strong>, a
-              licensed Chiang Mai tour operator managed by locals with over {site.experienceYears} years of
-              experience as tour guides.
+              {t.p1(site.company, site.experienceYears)}
             </p>
             <p className="mt-4 text-gray-600 leading-relaxed">
-              We bring you to the quiet mountain valley of Samoeng — caves, clear rivers and elephants, with
-              everything taken care of from the moment we pick you up.
+              {t.p2}
             </p>
             <ul className="mt-8 grid gap-3 sm:grid-cols-2">
-              {PERKS.map((perk) => (
+              {t.perks.map((perk) => (
                 <li key={perk} className="flex items-center gap-3 rounded-2xl bg-white/80 px-4 py-3 shadow-sm backdrop-blur">
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-jungle-900 text-ember-400">
                     <CheckIcon className="h-4 w-4" />
@@ -100,16 +100,16 @@ const AboutSection = ({ programs }) => {
             </ul>
             <div className="mt-9 flex flex-wrap gap-3">
               <Link
-                href="/programs"
+                href={href("/programs")}
                 className="inline-flex items-center gap-2 rounded-full bg-ember-500 px-7 py-3.5 font-semibold text-white shadow-lg shadow-ember-500/30 transition-all hover:-translate-y-0.5 hover:bg-ember-600"
               >
-                Explore Programs <ArrowRightIcon className="h-4 w-4" />
+                {getDict(lang).common.exploreProgramsBtn} <ArrowRightIcon className="h-4 w-4" />
               </Link>
               <Link
-                href="/contact-us"
+                href={href("/contact-us")}
                 className="inline-flex items-center rounded-full border-2 border-jungle-900 px-7 py-3.5 font-semibold text-jungle-900 transition-colors hover:bg-jungle-900 hover:text-white"
               >
-                Talk to Us
+                {t.talk}
               </Link>
             </div>
           </div>
@@ -137,14 +137,13 @@ const AboutSection = ({ programs }) => {
             <div className="absolute -bottom-32 left-1/3 h-72 w-72 rounded-full bg-jungle-950/20 blur-3xl" />
             <div className="relative grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-widest text-white/80">Also bookable on</p>
+                <p className="text-sm font-semibold uppercase tracking-widest text-white/80">{t.alsoOn}</p>
                 <h3 className="mt-2 font-display uppercase text-4xl sm:text-5xl leading-none">GetYourGuide</h3>
                 <p className="mt-5 max-w-md text-white/85">
-                  Prefer a platform you already know? Book the same trips through GetYourGuide — and if
-                  you&apos;ve joined us, a review there means the world to our team.
+                  {t.gygText}
                 </p>
                 <p className="mt-5 inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-sm font-semibold backdrop-blur">
-                  <StarIcon className="h-4 w-4" /> Leave us a review after your trip
+                  <StarIcon className="h-4 w-4" /> {t.review}
                 </p>
               </div>
               <ul className="grid gap-4 sm:grid-cols-2">
@@ -159,8 +158,8 @@ const AboutSection = ({ programs }) => {
                       <div className="relative aspect-[16/10] overflow-hidden">
                         <PhotoOrPlaceholder
                           src={p.images[0]}
-                          alt={p.name}
-                          label={p.nameTh}
+                          alt={programAlt(p, p.images[0], 0, lang)}
+                          label={p.altName}
                           className="transition-transform duration-700 group-hover:scale-110"
                         />
                         <span className="absolute left-3 top-3 rounded-full bg-jungle-950/80 px-3 py-1 text-xs font-bold text-white backdrop-blur">
@@ -170,7 +169,7 @@ const AboutSection = ({ programs }) => {
                       <div className="flex items-center justify-between gap-3 p-5">
                         <div>
                           <p className="font-semibold leading-snug">{p.name}</p>
-                          <p className="mt-0.5 text-sm text-gray-500">{p.nameTh}</p>
+                          <p className="mt-0.5 text-sm text-gray-500">{p.altName}</p>
                         </div>
                         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-ember-500 text-white transition-transform duration-300 group-hover:translate-x-1 group-hover:rotate-[-45deg]">
                           <ArrowRightIcon className="h-4 w-4" />

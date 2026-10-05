@@ -6,6 +6,8 @@ import { TextInput, TextArea, DatePicker } from "../component";
 import { JungleBackdrop, QrCard } from "./Jungle";
 import { CheckIcon, LineIcon, PhoneIcon } from "./Icons";
 import { site } from "../data/site";
+import { getDict } from "../i18n/dict";
+import { localePath } from "../i18n";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import axios from "axios";
@@ -19,7 +21,6 @@ import { addDoc, collection } from "firebase/firestore";
 
 const MIN_GUESTS = 2;
 const MAX_GUESTS = 30;
-const TRUST = ["Free cancellation 24h", "Hotel pickup", "Insurance included", "Local guide"];
 
 const StepTitle = ({ n, title }) => (
   <div className="mb-5 flex items-center gap-3">
@@ -30,7 +31,11 @@ const StepTitle = ({ n, title }) => (
   </div>
 );
 
-const Booking = ({ tour, price, qr }) => {
+// `tour` is the English program name sent to the booking backend and emails;
+// `tourLabel` is the name shown on the page (Thai on /th pages).
+const Booking = ({ tour, tourLabel = tour, price, qr, lang = "en" }) => {
+  const t = getDict(lang).booking;
+  const c = getDict(lang).common;
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [formErrors, setFormErrors] = useState({});
@@ -61,16 +66,16 @@ const Booking = ({ tour, price, qr }) => {
   };
 
   const Contact = z.object({
-    name: z.string().min(1, "Please enter your name"),
-    lastname: z.string().min(1, "Please enter your last name"),
-    email: z.string().email("Please enter a valid email"),
-    code: z.string().min(3, "Please enter your country code"),
-    tel: z.string().regex(phoneRegex, "Invalid Number!"),
-    msg: z.string().min(1, "Please enter your message"),
+    name: z.string().min(1, t.errors.name),
+    lastname: z.string().min(1, t.errors.lastname),
+    email: z.string().email(t.errors.email),
+    code: z.string().min(3, t.errors.code),
+    tel: z.string().regex(phoneRegex, t.errors.tel),
+    msg: z.string(),
     adults: z
       .string()
-      .refine((val) => parseInt(val) >= 2, { message: "Minimum 2 guests" }),
-    date: z.string().refine((val) => !isNaN(Date.parse(val)), "Invalid date"),
+      .refine((val) => parseInt(val) >= 2, { message: t.errors.adults }),
+    date: z.string().refine((val) => !isNaN(Date.parse(val)), t.errors.date),
   });
 
   const validateForm = (data) => {
@@ -90,11 +95,12 @@ const Booking = ({ tour, price, qr }) => {
   };
 
   const handleDateChange = (date) => {
-    const formatted = format(
-      new Date(date.year, date.month, date.day),
-      "yyyy-MM-dd"
-    );
+    // `date` is null when the field is cleared. CalendarDate months are 1-based.
+    const formatted = date
+      ? format(new Date(date.year, date.month - 1, date.day), "yyyy-MM-dd")
+      : "";
     setFormValues((prevValues) => ({ ...prevValues, date: formatted }));
+    setFormErrors((prevErrors) => ({ ...prevErrors, date: "" }));
   };
 
   const handleSubmit = async (event) => {
@@ -113,12 +119,12 @@ const Booking = ({ tour, price, qr }) => {
       handleClickPayNow();
     } catch (error) {
       console.error(error);
-      alert("Error, please try resubmitting the form");
+      alert(t.errors.resubmit);
     }
   };
 
   const notify = () => {
-    toast("Booking Success!");
+    toast(t.success);
   };
 
   const handleSuccess = (ref) => {
@@ -127,11 +133,11 @@ const Booking = ({ tour, price, qr }) => {
     setTimeout(() => {
       // Same page Omise returns 3-D Secure payments to (return_uri in korntour-api).
       // /payment-success/<id> only exists for bookings made before the last build.
-      router.push("/thank-you");
+      router.push(localePath(lang, "/thank-you"));
     }, 3500);
   };
 
-  const handleError = (message = "Payment failed, please try again") => {
+  const handleError = (message = t.errors.payment) => {
     setIsLoading(false);
     toast.error(message);
   };
@@ -195,7 +201,7 @@ const Booking = ({ tour, price, qr }) => {
 
   const handleClickPayNow = () => {
     if (!window.OmiseCard) {
-      handleError("Payment is still loading, please try again in a moment");
+      handleError(t.errors.loading);
       return;
     }
     creditCardConfigure();
@@ -253,14 +259,26 @@ const Booking = ({ tour, price, qr }) => {
         });
         handleSuccess(refId);
       } else {
-        handleError("Payment failed, please try again");
+        handleError(t.errors.payment);
       }
     } catch (e) {
       console.error("error:", e);
-      handleError("Payment failed, please try again or contact us on LINE");
+      handleError(t.errors.paymentLine);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // "2026-10-15" -> "Thu, Oct 15, 2026" / "พฤ. 15 ต.ค. 2569" (parsed as local time, not UTC).
+  const displayDate = (value) => {
+    if (!value) return t.notSelected;
+    const [y, m, d] = value.split("-").map(Number);
+    return new Date(y, m - 1, d).toLocaleDateString(lang === "th" ? "th-TH" : "en-US", {
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
   };
 
   const guests = parseInt(formValues.adults || "0", 10);
@@ -287,28 +305,27 @@ const Booking = ({ tour, price, qr }) => {
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10">
           <div>
             <span className="inline-block rounded-full bg-ember-500 px-4 py-1 text-xs font-semibold uppercase tracking-widest text-white">
-              Reserve Your Spot
+              {t.badge}
             </span>
             <h2 className="mt-4 font-display uppercase text-5xl md:text-6xl leading-none text-white">
-              Book this <span className="text-ember-500">Trip</span>
+              {t.title1} <span className="text-ember-500">{t.title2}</span>
             </h2>
           </div>
           <p className="max-w-sm text-sm text-white/70">
-            Fill in your details, choose a date and pay securely online. We&apos;ll email your
-            confirmation right away.
+            {t.intro}
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="grid gap-6 lg:grid-cols-[1fr_380px] items-start">
           {/* Form card */}
           <div className="rounded-3xl bg-white p-6 md:p-10 shadow-2xl shadow-black/30">
-            <StepTitle n={1} title="Your details" />
+            <StepTitle n={1} title={t.step1} />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
               <TextInput
                 name="name"
                 id="name"
-                label="First Name"
-                placeholder="John"
+                label={t.firstName}
+                placeholder={c.firstNamePh}
                 isInvalid={!!formErrors.name}
                 color={!!formErrors.name ? "danger" : "default"}
                 errorMessage={formErrors.name}
@@ -316,8 +333,8 @@ const Booking = ({ tour, price, qr }) => {
               />
               <TextInput
                 name="lastname"
-                label="Last Name"
-                placeholder="Doe"
+                label={t.lastName}
+                placeholder={c.lastNamePh}
                 isInvalid={!!formErrors.lastname}
                 color={!!formErrors.lastname ? "danger" : "default"}
                 errorMessage={formErrors.lastname}
@@ -326,19 +343,20 @@ const Booking = ({ tour, price, qr }) => {
             </div>
             <TextInput
               name="email"
-              label="Email Address"
+              label={t.email}
               type="email"
-              placeholder="john@example.com"
+              placeholder={c.emailPh}
               isInvalid={!!formErrors.email}
               color={!!formErrors.email ? "danger" : "default"}
               errorMessage={formErrors.email}
               onChange={handleChange}
             />
-            <p className="text-sm font-medium text-gray-700 mb-2">Phone Number</p>
+            <p className="text-sm font-medium text-gray-700 mb-2">{t.phone}</p>
             <div className="flex gap-3">
               <div className="w-24">
                 <TextInput
                   name="code"
+                  aria-label={`${t.phone} – ${c.countryCode}`}
                   isInvalid={!!formErrors.code}
                   color={!!formErrors.code ? "danger" : "default"}
                   errorMessage={formErrors.code}
@@ -349,6 +367,7 @@ const Booking = ({ tour, price, qr }) => {
               <div className="flex-1">
                 <TextInput
                   name="tel"
+                  aria-label={t.phone}
                   placeholder="812345678"
                   isInvalid={!!formErrors.tel}
                   color={!!formErrors.tel ? "danger" : "default"}
@@ -360,17 +379,18 @@ const Booking = ({ tour, price, qr }) => {
 
             <div className="my-6 border-t border-dashed border-gray-200" />
 
-            <StepTitle n={2} title="Trip details" />
+            <StepTitle n={2} title={t.step2} />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
               <DatePicker
                 name="date"
+                label={t.date}
                 isInvalid={!!formErrors.date}
                 color={!!formErrors.date ? "danger" : "default"}
                 onChange={handleDateChange}
                 errorMessage={formErrors.date}
               />
               <div className="pb-5">
-                <p className="text-sm text-gray-700 mb-2">Number of Guests</p>
+                <p className="text-sm text-gray-700 mb-2">{t.guestsLabel}</p>
                 <div
                   className={`flex h-12 items-center justify-between rounded-lg border-2 px-2 ${
                     formErrors.adults ? "border-danger" : "border-gray-200"
@@ -380,36 +400,36 @@ const Booking = ({ tour, price, qr }) => {
                     type="button"
                     onClick={() => setGuests(guests - 1)}
                     disabled={guests <= MIN_GUESTS}
-                    aria-label="Fewer guests"
+                    aria-label={t.fewer}
                     className="h-8 w-8 rounded-full bg-jungle-50 text-lg font-bold text-jungle-800 hover:bg-ember-500 hover:text-white disabled:opacity-40 disabled:hover:bg-jungle-50 disabled:hover:text-jungle-800 transition-colors"
                   >
                     −
                   </button>
                   <span className="text-lg font-semibold text-jungle-900">
-                    {guests} <span className="text-sm font-normal text-gray-500">guests</span>
+                    {guests} <span className="text-sm font-normal text-gray-500">{t.guests}</span>
                   </span>
                   <button
                     type="button"
                     onClick={() => setGuests(guests + 1)}
                     disabled={guests >= MAX_GUESTS}
-                    aria-label="More guests"
-                    className="h-8 w-8 rounded-full bg-jungle-50 text-lg font-bold text-jungle-800 hover:bg-ember-500 hover:text-white disabled:opacity-40 transition-colors"
+                    aria-label={t.more}
+                    className="h-8 w-8 rounded-full bg-jungle-50 text-lg font-bold text-jungle-800 hover:bg-ember-500 hover:text-white disabled:opacity-40 disabled:hover:bg-jungle-50 disabled:hover:text-jungle-800 transition-colors"
                   >
                     +
                   </button>
                 </div>
                 <p className={`mt-1 text-xs ${formErrors.adults ? "text-danger" : "text-gray-500"}`}>
-                  {formErrors.adults || `Minimum ${MIN_GUESTS} guests`}
+                  {formErrors.adults || t.minGuests(MIN_GUESTS)}
                 </p>
               </div>
             </div>
 
             <div className="my-6 border-t border-dashed border-gray-200" />
 
-            <StepTitle n={3} title="Special requests" />
+            <StepTitle n={3} title={t.step3} />
             <TextArea
               name="msg"
-              placeholder="Hotel name for pickup, dietary needs, questions..."
+              placeholder={t.requestsPlaceholder}
               isInvalid={!!formErrors.msg}
               color={!!formErrors.msg ? "danger" : "default"}
               errorMessage={formErrors.msg}
@@ -421,27 +441,27 @@ const Booking = ({ tour, price, qr }) => {
           <aside className="lg:sticky lg:top-6 space-y-4">
             <div className="overflow-hidden rounded-3xl bg-jungle-900 text-white shadow-2xl shadow-black/30 ring-1 ring-white/10">
               <div className="bg-gradient-to-br from-ember-500 to-ember-700 p-6">
-                <p className="text-xs font-semibold uppercase tracking-widest text-white/80">Your trip</p>
-                <p className="mt-1 text-xl font-semibold leading-snug">{tour}</p>
+                <p className="text-xs font-semibold uppercase tracking-widest text-white/80">{t.yourTrip}</p>
+                <p className="mt-1 text-xl font-semibold leading-snug">{tourLabel}</p>
               </div>
               <div className="p-6 space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-white/60">Date</span>
-                  <span className="font-medium">{formValues.date || "Not selected"}</span>
+                  <span className="text-white/60">{t.dateRow}</span>
+                  <span className="font-medium">{displayDate(formValues.date)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-white/60">Price per person</span>
-                  <span className="font-medium">{price?.toLocaleString()} THB</span>
+                  <span className="text-white/60">{t.pricePerPerson}</span>
+                  <span className="font-medium">{price?.toLocaleString()} {getDict(lang).common.thb}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-white/60">Guests</span>
+                  <span className="text-white/60">{t.guestsRow}</span>
                   <span className="font-medium">× {guests}</span>
                 </div>
                 <div className="border-t border-white/10 pt-4 flex items-end justify-between">
-                  <span className="text-white/60">Total</span>
+                  <span className="text-white/60">{t.total}</span>
                   <span className="font-display text-4xl text-ember-400">
                     {totalPrice.toLocaleString()}
-                    <span className="ml-1 font-body text-sm text-white/60">THB</span>
+                    <span className="ml-1 font-body text-sm text-white/60">{getDict(lang).common.thb}</span>
                   </span>
                 </div>
 
@@ -457,14 +477,14 @@ const Booking = ({ tour, price, qr }) => {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
-                      Processing...
+                      {t.processing}
                     </>
                   ) : (
                     <>
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                       </svg>
-                      Pay by Credit Card
+                      {t.pay}
                     </>
                   )}
                 </button>
@@ -472,11 +492,11 @@ const Booking = ({ tour, price, qr }) => {
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                   </svg>
-                  Secure payment powered by Omise
+                  {t.secure}
                 </p>
               </div>
               <ul className="grid grid-cols-2 gap-px bg-white/10 text-xs">
-                {TRUST.map((item) => (
+                {t.trust.map((item) => (
                   <li key={item} className="flex items-center gap-2 bg-jungle-900 px-4 py-3 text-white/80">
                     <CheckIcon className="w-4 h-4 shrink-0 text-ember-400" /> {item}
                   </li>
@@ -486,8 +506,8 @@ const Booking = ({ tour, price, qr }) => {
 
             {/* Help card */}
             <div className="rounded-3xl bg-white/5 p-6 text-white ring-1 ring-white/10 backdrop-blur">
-              <p className="font-semibold">Need help?</p>
-              <p className="mt-1 text-sm text-white/60">Questions about this trip? Talk to us.</p>
+              <p className="font-semibold">{t.help}</p>
+              <p className="mt-1 text-sm text-white/60">{t.helpText}</p>
               <div className="mt-4 flex flex-wrap gap-2">
                 <a
                   href={site.social.line}
@@ -495,7 +515,7 @@ const Booking = ({ tour, price, qr }) => {
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 rounded-full bg-[#06C755] px-4 py-2 text-sm font-semibold hover:brightness-110"
                 >
-                  <LineIcon className="w-4 h-4" /> Chat on LINE
+                  <LineIcon className="w-4 h-4" /> {getDict(lang).common.chatLine}
                 </a>
                 <a
                   href={`tel:${site.phone}`}
@@ -506,7 +526,7 @@ const Booking = ({ tour, price, qr }) => {
               </div>
               {qr && (
                 <div className="mt-5">
-                  <QrCard src={qr} dark />
+                  <QrCard src={qr} dark lang={lang} />
                 </div>
               )}
             </div>
@@ -520,6 +540,8 @@ const Booking = ({ tour, price, qr }) => {
 
 Booking.propTypes = {
   tour: PropTypes.string.isRequired,
+  tourLabel: PropTypes.string,
+  lang: PropTypes.string,
   price: PropTypes.number.isRequired,
   qr: PropTypes.string,
 };

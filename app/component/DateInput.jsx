@@ -14,8 +14,8 @@ const TDatePicker = (props) => {
       style={{ backgroundColor: "transparent" }}
     >
       <DatePicker
-        {...props}
         label="Date (Required)"
+        {...props}
         minValue={today(getLocalTimeZone())}
         variant="bordered"
         size="lg"
@@ -24,14 +24,12 @@ const TDatePicker = (props) => {
         selectorIcon={
           <Image
             src={calendarIcon}
-            alt="logo"
+            alt=""
             width={20}
             height={20}
             color="black"
           />
-        }
-        className={{ calendar: "bg-black" }}
-      />
+        }      />
     </div>
   );
 };

@@ -3,6 +3,8 @@ export const site = {
   name: "Samoeng Jungle Tubing",
   shortName: "SJT",
   logo: "/images/Logo/158617.jpg",
+  // 1200×630 link-preview image (Facebook, LINE, X). Cropped from public/programs/hero/.
+  ogImage: "/images/og-home.jpg",
   url: "https://chiangmaifriendlytour.com",
   company: "Chiang Mai Friendly Tour",
   license: "TAT License No. 23/03998",
