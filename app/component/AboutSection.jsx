@@ -43,7 +43,7 @@ const AboutSection = ({ programs, lang = "en" }) => {
       <Topo />
       <div className="relative max-w-[1280px] mx-auto px-5 lg:px-10 py-24 lg:py-32">
         {/* Collage + story */}
-        <div className="grid gap-16 lg:grid-cols-2 lg:items-center">
+        <div className="grid gap-16 lg:grid-cols-2 lg:items-center [&>*]:min-w-0">
           <div className="relative mx-auto w-full max-w-[520px] pb-10 pl-6 pt-10 sm:pl-10">
             {/* Main photo */}
             <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] shadow-2xl shadow-jungle-950/30">
@@ -78,7 +78,7 @@ const AboutSection = ({ programs, lang = "en" }) => {
             <span className="inline-block rounded-full bg-ember-500 px-4 py-1 text-xs font-semibold uppercase tracking-widest text-white">
               {t.badge}
             </span>
-            <h2 className="mt-5 font-display uppercase text-5xl sm:text-6xl leading-[0.95]">
+            <h2 className="mt-5 font-display uppercase text-[clamp(1.75rem,9.5vw,3rem)] sm:text-6xl leading-[0.95]">
               {t.title1}
               <span className="block text-ember-600">{t.title2}</span>
             </h2>

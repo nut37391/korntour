@@ -110,7 +110,7 @@ export default function HomeView({ lang }) {
               </div>
               <div className="mt-4 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
                 <h3 className="text-lg font-semibold">
-                  {p.name} <span className="text-white/50 font-normal whitespace-nowrap">· {p.altName}</span>
+                  {p.name} <span className="text-white/50 font-normal">· {p.altName}</span>
                 </h3>
                 <span className="shrink-0 text-sm text-ember-400">{t.common.fromLower} {p.price.toLocaleString()} {t.common.thb}</span>
               </div>

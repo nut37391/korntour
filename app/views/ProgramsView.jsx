@@ -92,7 +92,7 @@ export default function ProgramsView({ lang }) {
                   />
                 </div>
                 {p.images.length > 2 && (
-                  <div className={`absolute -bottom-8 flex gap-3 ${flip ? "-left-3 sm:-left-6" : "-right-3 sm:-right-6"}`}>
+                  <div className={`absolute -bottom-8 flex gap-3 ${flip ? "left-3 lg:-left-6" : "right-3 lg:-right-6"}`}>
                     {p.images.slice(1, 3).map((src, k) => (
                       <div
                         key={src}
@@ -118,7 +118,7 @@ export default function ProgramsView({ lang }) {
                     {p.duration}
                   </span>
                 </div>
-                <h2 className="mt-5 font-display uppercase text-4xl leading-[0.95] sm:text-5xl">{p.name}</h2>
+                <h2 className="mt-5 font-display uppercase text-[clamp(1.75rem,9.5vw,2.25rem)] leading-[0.95] sm:text-5xl">{p.name}</h2>
                 <p className="mt-5 leading-relaxed text-white/70">{p.tagline}</p>
 
                 <ul className="mt-7 space-y-3">
