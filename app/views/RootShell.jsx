@@ -62,10 +62,10 @@ const jsonLd = (lang) => ({
       description: getDict(lang).meta.orgDescription,
       address: {
         "@type": "PostalAddress",
-        streetAddress: "6/1 Kamphaeng Din Road 2",
-        addressLocality: "Chang Khlan, Mueang Chiang Mai",
+        streetAddress: "114 Moo 5",
+        addressLocality: "Samoeng Tai, Samoeng",
         addressRegion: "Chiang Mai",
-        postalCode: "51000",
+        postalCode: "50250",
         addressCountry: "TH",
       },
       geo: { "@type": "GeoCoordinates", latitude: 18.7883, longitude: 98.9853 },

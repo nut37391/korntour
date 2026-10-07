@@ -20,7 +20,7 @@ const en = {
       "Three adventures in Samoeng, Chiang Mai: Mae Sap Cave & jungle tubing, Samoeng river tubing and elephant sanctuary & tubing. Hotel pickup, lunch, guide and insurance included.",
     contactTitle: "Contact Us",
     contactDescription:
-      "Contact Samoeng Jungle Tubing for bookings and inquiries. Phone: +66 62-283-0334, Email: Samoengjungletubing@gmail.com. Located in Chang Khlan, Chiang Mai. Available 24/7.",
+      "Contact Samoeng Jungle Tubing for bookings and inquiries. Phone: +66 62-283-0334, Email: Samoengjungletubing@gmail.com. Located in Samoeng, Chiang Mai. Available 24/7.",
     privacyTitle: "Privacy Policy",
     privacyDescription:
       "How Samoeng Jungle Tubing (Chiang Mai Friendly Tour) collects, uses and protects your personal information.",
@@ -285,7 +285,7 @@ const th = {
       "3 โปรแกรมผจญภัยที่สะเมิง เชียงใหม่ ถ้ำแม่สาบ + ล่องห่วง, ล่องห่วงแม่น้ำสะเมิง และดูแลช้าง + ล่องห่วง รวมรถรับส่งโรงแรม อาหารกลางวัน ไกด์ และประกันภัย",
     contactTitle: "ติดต่อเรา",
     contactDescription:
-      "ติดต่อ Samoeng Jungle Tubing เพื่อจองทัวร์หรือสอบถาม โทร 062-283-0334 อีเมล Samoengjungletubing@gmail.com ตั้งอยู่ที่ช้างคลาน เมืองเชียงใหม่ ติดต่อได้ตลอด 24 ชั่วโมง",
+      "ติดต่อ Samoeng Jungle Tubing เพื่อจองทัวร์หรือสอบถาม โทร 062-283-0334 อีเมล Samoengjungletubing@gmail.com ตั้งอยู่ที่อำเภอสะเมิง เชียงใหม่ ติดต่อได้ตลอด 24 ชั่วโมง",
     privacyTitle: "นโยบายความเป็นส่วนตัว",
     privacyDescription:
       "วิธีที่ Samoeng Jungle Tubing (เชียงใหม่เฟรนด์ลี่ทัวร์) เก็บรวบรวม ใช้ และปกป้องข้อมูลส่วนบุคคลของคุณ",

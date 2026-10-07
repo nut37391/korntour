@@ -64,8 +64,7 @@ export function PrivacyTh() {
       <h2 className="text-xl pb-3 font-bold">11. ติดต่อเรา</h2>
       <p className="pb-1">หากมีคำถามหรือข้อสงสัยเกี่ยวกับนโยบายความเป็นส่วนตัวนี้ กรุณาติดต่อเราที่:</p>
       <p>
-        <strong>ที่อยู่</strong>: 6/1 Kamphaeng Din Road 2, Chang Moi Subdistrict, Mueang Chiang Mai District, Chiang
-        Mai, 51000
+        <strong>ที่อยู่</strong>: 114 หมู่ที่ 5 ต.สะเมิงใต้ อ.สะเมิง จ.เชียงใหม่ 50250
       </p>
       <p>
         <strong>อีเมล</strong>: Samoengjungletubing@gmail.com

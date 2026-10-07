@@ -175,7 +175,7 @@ export default function ContactClient({ qr, banner, lang = "en" }) {
     {
       icon: <MapMarkerIcon className="w-7 h-7" />,
       label: t.address,
-      lines: site.address.map((text) => ({ text })),
+      lines: site.address[lang].map((text) => ({ text })),
     },
     {
       icon: <EnvelopeIcon className="w-7 h-7" />,

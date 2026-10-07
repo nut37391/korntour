@@ -11,11 +11,10 @@ export const site = {
   phone: "+66622830334",
   phoneDisplay: "(66) 62-283-0334",
   email: "Samoengjungletubing@gmail.com",
-  address: [
-    "6/1 Kamphaeng Din Road 2,",
-    "Chang Khlan, Mueang Chiang Mai,",
-    "Chiang Mai 51000",
-  ],
+  address: {
+    en: ["114 Moo 5, Samoeng Tai Subdistrict,", "Samoeng District,", "Chiang Mai 50250"],
+    th: ["114 หมู่ที่ 5 ต.สะเมิงใต้", "อ.สะเมิง", "จ.เชียงใหม่ 50250"],
+  },
   hours: "Daily 07:00 – 18:00",
   // Same company as the previous site, which stated "over 35 years of experience as tour guides".
   experienceYears: 35,

@@ -75,7 +75,7 @@ const Footer = ({ lang = "en" }) => {
               </li>
               <li className="flex gap-2">
                 <MapMarkerIcon className="w-4 h-4 shrink-0 mt-0.5" />
-                <span>{site.address.join(" ")}</span>
+                <span>{site.address[lang].join(" ")}</span>
               </li>
             </ul>
           </div>

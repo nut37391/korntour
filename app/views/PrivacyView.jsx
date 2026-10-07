@@ -118,8 +118,8 @@ function PrivacyEn() {
         contact us at:
       </p>
       <p>
-        <strong>Address</strong>: 6/1 Kamphaeng Din Road 2, Chang Moi
-        Subdistrict, Mueang Chiang Mai District, Chiang Mai, 51000
+        <strong>Address</strong>: 114 Moo 5, Samoeng Tai Subdistrict,
+        Samoeng District, Chiang Mai, 50250
       </p>
       <strong>Email</strong>: Samoengjungletubing@gmail.com
       <p></p>

@@ -90,8 +90,7 @@ export function TermsTh() {
       <p className="pb-1">หากมีคำถามเกี่ยวกับข้อกำหนดการให้บริการนี้ กรุณาติดต่อเราที่:</p>
       <div>
         <p>
-          <strong>ที่อยู่</strong>: 6/1 Kamphaeng Din Road 2, Chang Moi Subdistrict, Mueang Chiang Mai District, Chiang
-          Mai, 51000
+          <strong>ที่อยู่</strong>: 114 หมู่ที่ 5 ต.สะเมิงใต้ อ.สะเมิง จ.เชียงใหม่ 50250
         </p>
         <p>
           <strong>อีเมล</strong>: Samoengjungletubing@gmail.com
